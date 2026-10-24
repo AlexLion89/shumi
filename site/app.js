@@ -2,6 +2,7 @@
 // Данные — sync.js: копия полки на телефоне + файл shelf.json в приватном GitHub-репозитории (github.js).
 // Поиск — FantLab и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
 // почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут.
+import { createFeedback } from "./feedback.js";
 import { AuthError, cleanKey, github } from "./github.js";
 import { merge } from "./rank.js";
 import { SHELVES, findSame, list, newId, readByYear, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
@@ -42,7 +43,7 @@ const books = n => `${n} ${plural(n, "книга", "книги", "книг")}`;
 const short = t => (t.length > 40 ? t.slice(0, 38) + "…" : t);
 const nowIso = () => new Date().toISOString();
 
-let store = null;
+let store = null, fb = null;
 
 // ---------- вход
 
@@ -68,16 +69,19 @@ $("login-form").addEventListener("submit", async e => {
 });
 
 function start(key) {
-  store = createStore({ storage: ls, client: github({ token: key, base: GH }), onChange: render });
+  const client = github({ token: key, base: GH });
+  store = createStore({ storage: ls, client, onChange: render });
+  fb = createFeedback({ storage: ls, client, newId, onChange: renderFeedback });
   $("login").hidden = true;
   $("app").hidden = false;
   render();
   store.sync();
+  fb.sync();   // ответы на замечания — точка у 💬
 }
 
 // ---------- экраны
 
-const VIEWS = { shelf: viewShelf, want: viewWant, find: viewFind, stats: viewStats };
+const VIEWS = { shelf: viewShelf, want: viewWant, find: viewFind, stats: viewStats, feedback: viewFeedback };
 const route = () => { const [tab, arg] = location.hash.slice(1).split("/"); return VIEWS[tab] ? { tab, arg } : { tab: "shelf" }; };
 
 function render() {
@@ -87,6 +91,7 @@ function render() {
   for (const t of Object.keys(VIEWS)) $("v-" + t).hidden = t !== tab;
   renderStatus();
   VIEWS[tab](store.view(), arg);
+  renderFeedback();
   sheetRender?.();
 }
 
@@ -382,6 +387,81 @@ function remove(id) {
   toast(`«${short(b.title)}» убрана`, "Вернуть", () => store.change([{ op: "put", id, book: b }]));
 }
 
+// ---------- замечания (как в «Хурма вяжет»): форма вверху, ниже — её замечания с ответами разработчика.
+// Форма в разметке постоянная, перерисовывается только список: иначе пропадал бы текст, который она печатает.
+
+const fbDate = iso => (iso ? new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "long" }) : "");
+
+function viewFeedback() {
+  renderFeedback();
+  fb?.markSeen();
+}
+
+function renderFeedback() {
+  if (!fb) return;
+  const onScreen = route().tab === "feedback";
+  $("fb-dot").hidden = onScreen || !fb.unseen();
+  $("fb-open").hidden = onScreen;
+  if (!onScreen) return;
+  const items = fb.list();
+  fill($("fb-list"),
+    fb.failed() && items.some(f => f.pending) ? el("p", { class: "sub" }, "Нет связи — замечания уйдут, когда она появится.") : null,
+    items.map(f => el("div", { class: "fb-item" + (f.status === "done" ? " done" : "") },
+      el("div", { class: "when" }, fbDate(f.createdAt), f.status === "done" ? " · ✅ сделано" : "", f.pending ? " · ⏳ отправляется" : ""),
+      el("div", { class: "text" }, f.text),
+      f.reply ? el("div", { class: "reply" }, "💬 ", f.reply) : null,
+      el("div", { class: "row" },
+        el("button", { class: "link", type: "button", onclick: () => openFbEdit(f) }, "изменить"),
+        el("button", { class: "link danger", type: "button", onclick: () => { if (confirm("Удалить это замечание?")) fb.remove(f.id); } }, "удалить")))));
+}
+
+function openFbEdit(f) {
+  let text = f.text;
+  openSheet(() => el("div", { class: "sheet-body" },
+    el("h2", {}, "Замечание"),
+    el("textarea", { class: "text", rows: 5, oninput: e => { text = e.target.value; } }, f.text),
+    el("div", { class: "sheet-foot" },
+      el("button", { class: "link danger", type: "button", onclick: closeSheet }, "Отмена"),
+      el("button", { class: "pill main", type: "button", onclick: () => { if (text.trim()) { fb.edit(f.id, text); closeSheet(); } } }, "Сохранить"))),
+  () => "fb-edit");
+}
+
+$("fb-open").addEventListener("click", () => { location.hash = "feedback"; window.scrollTo(0, 0); });
+$("fb-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const text = $("fb-text").value.trim();
+  if (!text) { $("fb-text").focus(); return; }
+  fb.add(text);
+  $("fb-text").value = "";
+  $("fb-text").blur();
+  toast("Спасибо! Замечание записано");
+});
+
+// ---------- новая версия: кнопка «Обновить», а не «закрой и открой» (как в «Хурма вяжет»)
+// Service Worker новой версии ждёт, пока она не нажмёт кнопку; обновления проверяются, когда приложение
+// возвращается на экран, и раз в полчаса.
+
+async function setupUpdates() {
+  if (!("serviceWorker" in navigator) || params.get("gh")) return;   // в разработке (?gh=…) не нужен
+  const reg = await navigator.serviceWorker.register("sw.js").catch(() => null);
+  if (!reg) return;
+  const offer = w => {
+    if (!w || !navigator.serviceWorker.controller) return;   // первая установка — обновлять нечего
+    $("update").hidden = false;
+    $("update").onclick = () => { $("update").disabled = true; w.postMessage("skip-waiting"); };
+  };
+  offer(reg.waiting);
+  reg.addEventListener("updatefound", () => {
+    const w = reg.installing;
+    w?.addEventListener("statechange", () => { if (w.state === "installed") offer(w); });
+  });
+  let reloading = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!reloading) { reloading = true; location.reload(); } });
+  const check = () => reg.update().catch(() => {});
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") check(); });
+  setInterval(check, 30 * 60 * 1000);
+}
+
 // ---------- сообщение снизу
 
 let toastTimer;
@@ -400,10 +480,9 @@ for (const b of document.querySelectorAll("nav.tabs button")) {
 }
 window.addEventListener("hashchange", render);
 window.addEventListener("online", () => store?.sync());
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") store?.sync(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { store?.sync(); fb?.sync(); } });
 setInterval(() => { if (store?.pending() && document.visibilityState === "visible") store.sync(); }, 30000);
-// Офлайн и мгновенный запуск. В разработке (?gh=…) не нужен: мешал бы видеть свежий код.
-if ("serviceWorker" in navigator && !params.get("gh")) navigator.serviceWorker.register("sw.js").catch(() => {});
+setupUpdates();
 
 const key = localStorage.getItem(KEY);
 if (key) start(key); else showLogin();

@@ -1,12 +1,14 @@
 // Офлайн и мгновенный запуск. Оболочка приложения — из кеша своей версии: новая версия при выкладке скачивается
-// целиком и включается со следующего открытия, так что файлы разных версий не смешиваются. Обложки — из кеша
+// целиком и включается по кнопке «Обновить» или при следующем открытии, так что файлы разных версий не смешиваются. Обложки — из кеша
 // навсегда. Запросы к GitHub API и каталогам не трогаем: данные ведёт sync.js, поиск всегда живой.
 const VERSION = "__VERSION__";   // при выкладке сюда подставляется коммит (.github/workflows/deploy.yml)
 const SHELL = "shell-" + VERSION, COVERS = "covers-v1";
-const FILES = ["./", "index.html", "style.css", "app.js", "github.js", "rank.js", "shelf.js", "sources.js", "sync.js",
+const FILES = ["./", "index.html", "style.css", "app.js", "feedback.js", "github.js", "rank.js", "shelf.js", "sources.js", "sync.js",
   "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon-32.png"];
 
-self.addEventListener("install", e => e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
+// Новая версия не включается сама: ждёт, пока в приложении нажмут «Обновить» (сообщение skip-waiting).
+self.addEventListener("install", e => e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))));
+self.addEventListener("message", e => { if (e.data === "skip-waiting") self.skipWaiting(); });
 self.addEventListener("activate", e => e.waitUntil(caches.keys()
   .then(keys => Promise.all(keys.filter(k => k.startsWith("shell-") && k !== SHELL).map(k => caches.delete(k))))
   .then(() => self.clients.claim())));

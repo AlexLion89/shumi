@@ -31,7 +31,9 @@
 </section>
 
 <div id="app" hidden>
+  <button id="update" class="update" type="button" hidden>Вышла новая версия · <b>Обновить</b></button>
   <button id="sync" class="sync" type="button" hidden></button>
+  <button id="fb-open" class="fb-btn" type="button" aria-label="Замечания и пожелания">💬<span id="fb-dot" class="dot" hidden></span></button>
   <main>
     <section id="v-shelf" class="view"></section>
     <section id="v-want" class="view" hidden></section>
@@ -45,6 +47,15 @@
       <button id="manual" class="link" type="button">Нет нужной книги? Добавить вручную</button>
     </section>
     <section id="v-stats" class="view" hidden></section>
+    <section id="v-feedback" class="view" hidden>
+      <h1>Что улучшить?</h1>
+      <p class="sub">Что неудобно, чего не хватает, какая книга не нашлась — любая мелочь пригодится. Ответ появится здесь же.</p>
+      <form id="fb-form">
+        <textarea id="fb-text" rows="4" placeholder="Например: хочу видеть, сколько страниц прочитала за год"></textarea>
+        <button class="pill main" type="submit">Отправить</button>
+      </form>
+      <div id="fb-list"></div>
+    </section>
   </main>
   <!-- Нижняя панель — как на books.sirenyov.link: значок из data-icon, подпись, у активной — полоска сверху. -->
   <nav class="tabs">

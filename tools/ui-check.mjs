@@ -82,6 +82,34 @@ try {
   await page.until("document.querySelector('#v-stats .big')");
   check(await page.eval("document.querySelector('#v-stats .big').textContent") === "0", "итоги: книга ушла в «Хочу» — за год 0");
 
+  // Замечание: 💬 → текст → «Отправить» → файл feedback/<id>.json; ответ разработчика → точка у 💬 и ответ на экране.
+  await page.click("#fb-open");
+  await page.until("!document.getElementById('v-feedback').hidden");
+  await page.eval("document.getElementById('fb-text').value = 'Хочу видеть, сколько страниц за год'; 1");
+  await page.eval("document.getElementById('fb-form').requestSubmit(); 1");
+  await page.until("document.querySelector('#fb-list .fb-item') && !document.querySelector('#fb-list .fb-item .when').textContent.includes('отправляется')");
+  const fbFiles = await (await fetch("http://localhost:8788/repos/AlexLion89/shumi-data/contents/feedback", { headers: { Authorization: "Bearer t" } })).json();
+  check(Array.isArray(fbFiles) && fbFiles.length === 1, "замечание ушло файлом в feedback/");
+  const fbFile = await (await fetch(`http://localhost:8788/repos/AlexLion89/shumi-data/contents/${fbFiles[0].path}`, { headers: { Authorization: "Bearer t" } })).json();
+  const fbData = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(fbFile.content), c => c.charCodeAt(0))));
+  check(fbData.text === "Хочу видеть, сколько страниц за год" && fbData.status === "open", "в файле — её текст, статус «открыто»");
+  const answered = { ...fbData, reply: "Сделаю: страницы есть не у всех книг, покажу, где известны", status: "done" };
+  const enc = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+  await fetch(`http://localhost:8788/repos/AlexLion89/shumi-data/contents/${fbFiles[0].path}`, { method: "PUT", headers: { Authorization: "Bearer t" },
+    body: JSON.stringify({ message: "Ответ на замечание", content: enc(JSON.stringify(answered)), sha: fbFile.sha }) });
+  await page.click("nav.tabs button", "Полка");
+  await page.eval("document.dispatchEvent(new Event('visibilitychange')); 1");   // вернулась в приложение — синхронизация
+  await page.until("!document.getElementById('fb-dot').hidden");
+  check(true, "ответ пришёл — у 💬 горит точка");
+  await page.shot(join(out, "04-fb-dot.png"));
+  await page.click("#fb-open");
+  await page.until("document.querySelector('#fb-list .reply')");
+  check(await page.eval("document.querySelector('#fb-list .reply').textContent.includes('страницы есть не у всех')"), "ответ виден под замечанием");
+  check(await page.eval("document.querySelector('#fb-list .when').textContent.includes('сделано')"), "замечание помечено «сделано»");
+  await page.shot(join(out, "05-feedback.png"));
+  await page.click("nav.tabs button", "Полка");
+  check(await page.eval("document.getElementById('fb-dot').hidden"), "после просмотра точка погасла");
+
   const commits = server.log.filter(l => l.startsWith("коммит:"));
   console.log(commits.map(c => "   " + c).join("\n"));
   check(commits.length >= 3, "каждое действие — коммит с понятным сообщением");
