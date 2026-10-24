@@ -1,5 +1,5 @@
 :root {
-  --bg: #F7F2EA; --card: #FFFFFF; --fg: #2A2A2A; --muted: #8A8580; --line: #E8E0D4;
+  --bg: #F7EEE0; --card: #FFFFFF; --fg: #2A2A2A; --muted: #8A8580; --line: #E8E0D4;
   --accent: #C9694E; --ok: #4E8A5B; --bad: #C0503A; --star: #D9A62E;
   color-scheme: light dark;
 }

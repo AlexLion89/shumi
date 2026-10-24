@@ -1,54 +1,43 @@
-"""Иконки полки из site/icon.svg: PNG для iPhone, Android и вкладки браузера.
+"""Иконки полки из art/raccoon.png (енот с книгой, 1254x1254, фон #F7EEE0).
 
-Рисует SVG в headless Edge в 1024x1024 и уменьшает Pillow. Для иконок приложения фон без скругления —
-углы скругляет система; для favicon — скруглённый, с прозрачными углами.
+Иконки приложения — весь кадр: енот занимает около 70% по центру, углы iOS и Android скругляют сами.
+Значок вкладки — кадр плотнее (32 px иначе мелко) и со скруглёнными прозрачными углами.
 
     python tools/icons.py
 """
 import pathlib
-import subprocess
-import tempfile
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
-EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-BIG = 1024
+SOURCE = ROOT / "art" / "raccoon.png"
+# Рамка содержимого исходника — (212, 166)–(1040, 1134); квадрат вокруг неё с запасом около 4%.
+FAVICON_CROP = (92, 116, 1160, 1184)
 
 
-def render(svg_text: str, tmp: pathlib.Path, name: str) -> Image.Image:
-    (tmp / f"{name}.svg").write_text(svg_text, encoding="utf-8")
-    page = tmp / f"{name}.html"
-    page.write_text(f'<html><body style="margin:0;background:transparent">'
-                    f'<img src="{name}.svg" style="display:block;width:{BIG}px;height:{BIG}px"></body></html>',
-                    encoding="utf-8")
-    shot = tmp / f"{name}.png"
-    subprocess.run([EDGE, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-                    "--default-background-color=00000000", f"--user-data-dir={tmp / 'profile'}",
-                    f"--window-size={BIG},{BIG}", f"--screenshot={shot}", page.as_uri()],
-                   check=True, capture_output=True, timeout=120)
-    img = Image.open(shot).convert("RGBA")
-    if img.size != (BIG, BIG):
-        raise SystemExit(f"Edge отдал {img.size}, ждали {BIG}x{BIG}")
-    return img
+def rounded(img: Image.Image, radius_share: float) -> Image.Image:
+    big = img.convert("RGBA")
+    mask = Image.new("L", big.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, *big.size), radius=int(big.size[0] * radius_share), fill=255)
+    big.putalpha(mask)
+    return big
 
 
 def main() -> None:
-    svg = (SITE / "icon.svg").read_text(encoding="utf-8")
-    flat = svg.replace('rx="112" fill="#F7F2EA"', 'rx="0" fill="#F7F2EA"')
-    if flat == svg:
-        raise SystemExit("в icon.svg не нашёлся фон с rx=\"112\" — поправь замену в tools/icons.py")
-    with tempfile.TemporaryDirectory() as t:
-        tmp = pathlib.Path(t)
-        square, rounded = render(flat, tmp, "square"), render(svg, tmp, "rounded")
-        for name, img, size in [("apple-touch-icon.png", square, 180), ("icon-192.png", square, 192),
-                                ("icon-512.png", square, 512), ("favicon-32.png", rounded, 32)]:
-            out = img.resize((size, size), Image.LANCZOS)
-            if name != "favicon-32.png":
-                out = out.convert("RGB")
-            out.save(SITE / name, optimize=True)
-            print(f"{name}: {size}x{size}, {(SITE / name).stat().st_size} байт")
+    src = Image.open(SOURCE).convert("RGB")
+    if src.size[0] != src.size[1]:
+        raise SystemExit(f"исходник не квадратный: {src.size}")
+    out = {
+        "apple-touch-icon.png": src.resize((180, 180), Image.LANCZOS),
+        "icon-192.png": src.resize((192, 192), Image.LANCZOS),
+        "icon-512.png": src.resize((512, 512), Image.LANCZOS),
+        # Скругляем в большом размере и уменьшаем — края получаются гладкими.
+        "favicon-32.png": rounded(src.crop(FAVICON_CROP), 0.22).resize((32, 32), Image.LANCZOS),
+    }
+    for name, img in out.items():
+        img.save(SITE / name, optimize=True)
+        print(f"{name}: {img.size[0]}x{img.size[1]}, {(SITE / name).stat().st_size} байт")
 
 
 if __name__ == "__main__":
