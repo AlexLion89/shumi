@@ -83,7 +83,7 @@ test("CSV: «;», кавычки, BOM для Excel, свежие сверху", 
     b: book("Свежая", { shelf: "read", reads: ["2026-10"] }),
   });
   const csv = toCSV(s);
-  assert.ok(csv.startsWith("﻿\"Название\";\"Автор\""));
+  assert.ok(csv.startsWith("\uFEFF\"Название\";\"Автор\""));
   const lines = csv.trim().split("\r\n");
   assert.match(lines[1], /^"Свежая";/);
   assert.match(lines[2], /^"Книга ""в кавычках""";"Автор";"";"Прочитано";"4";"2025-01";"2026-10-01"$/);

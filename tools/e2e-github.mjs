@@ -7,6 +7,7 @@
 // так Windows кладёт текст в буфер обмена, а `cat /dev/clipboard > файл` сохраняет как есть.
 import { AuthError, cleanKey, github, REPO } from "../site/github.js";
 import { parse } from "../site/shelf.js";
+import { createFeedback } from "../site/feedback.js";
 import { createStore } from "../site/sync.js";
 import { memStorage } from "../tests/helpers.mjs";
 import { readFileSync } from "node:fs";
@@ -14,7 +15,7 @@ import { readFileSync } from "node:fs";
 function readKey(file) {
   const b = readFileSync(file);
   const text = b[0] === 0xff && b[1] === 0xfe ? b.subarray(2).toString("utf16le") : b.toString("utf8");
-  return text.replace(/^﻿/, "").trim();
+  return text.replace(/^\uFEFF/, "").trim();
 }
 const token = cleanKey(process.env.SHUMI_TOKEN_FILE ? readKey(process.env.SHUMI_TOKEN_FILE) : process.env.SHUMI_TOKEN);
 if (!/^github_pat_\w+$/.test(token ?? "")) { console.error("нет ключа: SHUMI_TOKEN_FILE или SHUMI_TOKEN (github_pat_…)"); process.exit(2); }
@@ -66,6 +67,20 @@ try {
   const del = await fetch(`${API}/contents/${PATH}`, { method: "DELETE", headers: { ...auth, "Content-Type": "application/json" },
     body: JSON.stringify({ message: "Проверка e2e: временный файл убран", sha: file.sha, branch: "main" }) });
   check(del.ok, "временный файл удалён");
+
+  // Замечание: файл в feedback/, ответ «разработчика», удаление. id на e2e — задание feedback.yml
+  // не заводит issue (уведомления владельцу не будет).
+  const fid = "e2e" + Date.now().toString(36);
+  const fb = createFeedback({ storage: memStorage(), client: client(), newId: () => fid });
+  await fb.add("Проверка e2e: замечание");
+  const fbFile = await client().files.read(`feedback/${fid}.json`);
+  check(fbFile && JSON.parse(fbFile.text).text === "Проверка e2e: замечание", "замечание: файл feedback/<id>.json на GitHub");
+  await client().files.write(`feedback/${fid}.json`, JSON.stringify({ ...JSON.parse(fbFile.text), reply: "ответ e2e", status: "done" }, null, 2) + "\n",
+    fbFile.sha, "Проверка e2e: ответ на замечание");
+  await fb.sync();
+  check(fb.list()[0]?.reply === "ответ e2e" && fb.unseen() === 1, "замечание: ответ дошёл до приложения, точка у 💬");
+  await fb.remove(fid);
+  check(!(await client().files.read(`feedback/${fid}.json`)), "замечание: удалено с GitHub");
 } catch (e) {
   check(false, "сбой: " + e.message);
 }

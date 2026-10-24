@@ -106,7 +106,7 @@ export function describe(ops, before, after) {
 export function toCSV(shelf) {
   const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows = list(shelf).sort((a, b) => lastRead(b).localeCompare(lastRead(a)) || String(b.added).localeCompare(String(a.added)));
-  return "﻿" + [["Название", "Автор", "Год издания", "Полка", "Оценка", "Прочитано", "Добавлено"].map(q).join(";"),
+  return "\uFEFF" + [["Название", "Автор", "Год издания", "Полка", "Оценка", "Прочитано", "Добавлено"].map(q).join(";"),
     ...rows.map(b => [b.title, (b.authors ?? []).join(", "), b.year, SHELVES[b.shelf], b.rating, (b.reads ?? []).join(", "),
       String(b.added ?? "").slice(0, 10)].map(q).join(";"))].join("\r\n") + "\r\n";
 }
