@@ -1,0 +1,73 @@
+name: Cloudflare — проверка токена и ресурсы
+
+# Проверяет секреты CLOUDFLARE_API_TOKEN и CLOUDFLARE_ACCOUNT_ID и создаёт, если их ещё нет,
+# базу D1 «shumi» (размещение eeur — ближе к Москве) и пространство KV «shumi».
+# Повторный запуск ничего не пересоздаёт. Репозиторий публичный и логи видны всем,
+# поэтому в вывод идут только статусы и id ресурсов (они не секретны).
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/cloudflare-setup.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CF: https://api.cloudflare.com/client/v4
+    steps:
+      - name: Секреты на месте
+        run: |
+          [ -n "$TOKEN" ]   || { echo "::error::нет секрета CLOUDFLARE_API_TOKEN"; exit 1; }
+          [ -n "$ACCOUNT" ] || { echo "::error::нет секрета CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+
+      - name: Токен действует
+        run: |
+          status=$(curl -s -H "Authorization: Bearer $TOKEN" "$CF/user/tokens/verify" | jq -r '.result.status // "не принят"')
+          echo "токен: $status"
+          [ "$status" = active ] || { echo "::error::Cloudflare не принял токен — скопирован целиком?"; exit 1; }
+
+      - name: Токен видит аккаунт
+        run: |
+          ok=$(curl -s -H "Authorization: Bearer $TOKEN" "$CF/accounts/$ACCOUNT" | jq -r '.success')
+          [ "$ok" = true ] || { echo "::error::токен не видит аккаунт из CLOUDFLARE_ACCOUNT_ID — проверь, что там Account ID"; exit 1; }
+          echo "аккаунт: доступен"
+
+      - name: База D1 «shumi»
+        run: |
+          api="$CF/accounts/$ACCOUNT/d1/database"
+          r=$(curl -s -H "Authorization: Bearer $TOKEN" "$api?name=shumi")
+          [ "$(jq -r .success <<<"$r")" = true ] || { echo "::error::D1: $(jq -c .errors <<<"$r")"; exit 1; }
+          id=$(jq -r '[(.result // [])[] | select(.name == "shumi")][0].uuid // empty' <<<"$r")
+          if [ -z "$id" ]; then
+            r=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+                 -d '{"name": "shumi", "primary_location_hint": "eeur"}' "$api")
+            [ "$(jq -r .success <<<"$r")" = true ] || { echo "::error::D1: $(jq -c .errors <<<"$r")"; exit 1; }
+            id=$(jq -r .result.uuid <<<"$r")
+            echo "база создана"
+          else
+            echo "база уже есть"
+          fi
+          echo "::notice title=D1 shumi::$id"
+
+      - name: Хранилище KV «shumi»
+        run: |
+          api="$CF/accounts/$ACCOUNT/storage/kv/namespaces"
+          r=$(curl -s -H "Authorization: Bearer $TOKEN" "$api?per_page=100")
+          [ "$(jq -r .success <<<"$r")" = true ] || { echo "::error::KV: $(jq -c .errors <<<"$r")"; exit 1; }
+          id=$(jq -r '[(.result // [])[] | select(.title == "shumi")][0].id // empty' <<<"$r")
+          if [ -z "$id" ]; then
+            r=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+                 -d '{"title": "shumi"}' "$api")
+            [ "$(jq -r .success <<<"$r")" = true ] || { echo "::error::KV: $(jq -c .errors <<<"$r")"; exit 1; }
+            id=$(jq -r .result.id <<<"$r")
+            echo "хранилище создано"
+          else
+            echo "хранилище уже есть"
+          fi
+          echo "::notice title=KV shumi::$id"
