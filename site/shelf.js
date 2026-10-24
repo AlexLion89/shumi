@@ -98,8 +98,9 @@ export function describe(ops, before, after) {
     if ("rating" in o.book) return `Оценка ${b.rating ? stars(b.rating) : "снята"}: ${who(b)}`;
     return `Изменена: ${who(b)}`;
   });
-  const uniq = [...new Set(lines)];
-  return uniq.length === 1 ? uniq[0] : `${uniq.length} изменения на полке\n\n${uniq.join("\n")}`;
+  const uniq = [...new Set(lines)], n = uniq.length, a = n % 10, b = n % 100;
+  const word = a === 1 && b !== 11 ? "изменение" : a >= 2 && a <= 4 && (b < 10 || b >= 20) ? "изменения" : "изменений";
+  return n === 1 ? uniq[0] : `${n} ${word} на полке\n\n${uniq.join("\n")}`;
 }
 
 // CSV для «Скачать»: открывается в Excel и Numbers; разделитель «;» — как ждёт русский Excel.

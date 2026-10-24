@@ -75,6 +75,8 @@ test("сообщение коммита читается как дневник",
   assert.equal(describe(del, before, apply(before, del)), "Убрана с полки: «Масло» — Асако Юзуки");
   const two = [...add, ...del];
   assert.match(describe(two, before, apply(before, two)), /^2 изменения на полке\n\nХочу прочитать: .*\nУбрана с полки: /);
+  const five = ["a", "b", "c", "d", "e"].map((id, i) => ({ op: "put", id, book: book(`Книга ${i}`) }));
+  assert.match(describe(five, emptyShelf(), apply(emptyShelf(), five)), /^5 изменений на полке/);
 });
 
 test("CSV: «;», кавычки, BOM для Excel, свежие сверху", () => {
