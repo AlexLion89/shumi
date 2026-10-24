@@ -1,0 +1,20 @@
+# Worker API полки shumi. Выкладывается из GitHub Actions (.github/workflows/deploy.yml):
+# локальный wrangler на машине владельца не запускается (Node 16).
+name = "shumi-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[observability]
+enabled = true
+
+# Ресурсы созданы заданием .github/workflows/cloudflare-setup.yml.
+[[kv_namespaces]]
+binding = "KV"
+id = "31e2e07759384f86b8c7d0fefd58bc57"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shumi"
+database_id = "e8f40e3c-3531-4021-86f8-fa8cf272ecff"
+migrations_dir = "migrations"

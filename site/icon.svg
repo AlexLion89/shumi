@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Енот читает книгу</title>
+  <!-- Фон. Иконки для iPhone и Android tools/icons.py рисует без скругления (rx="0"): углы скругляет система. -->
+  <rect id="bg" width="512" height="512" rx="112" fill="#F7F2EA"/>
+
+  <!-- Туловище: почти целиком за книгой, видны плечи. -->
+  <ellipse cx="256" cy="486" rx="176" ry="124" fill="#9C958F"/>
+
+  <!-- Уши. -->
+  <ellipse cx="158" cy="128" rx="50" ry="60" transform="rotate(-28 158 128)" fill="#9C958F"/>
+  <ellipse cx="163" cy="136" rx="27" ry="35" transform="rotate(-28 163 136)" fill="#3B3532"/>
+  <ellipse cx="354" cy="128" rx="50" ry="60" transform="rotate(28 354 128)" fill="#9C958F"/>
+  <ellipse cx="349" cy="136" rx="27" ry="35" transform="rotate(28 349 136)" fill="#3B3532"/>
+
+  <!-- Голова, светлые брови, маска, глаза смотрят вниз — в книгу. -->
+  <ellipse cx="256" cy="222" rx="142" ry="120" fill="#9C958F"/>
+  <ellipse cx="196" cy="166" rx="44" ry="16" transform="rotate(-10 196 166)" fill="#F4EEE6"/>
+  <ellipse cx="316" cy="166" rx="44" ry="16" transform="rotate(10 316 166)" fill="#F4EEE6"/>
+  <g fill="#3B3532">
+    <ellipse cx="194" cy="220" rx="64" ry="40" transform="rotate(14 194 220)"/>
+    <ellipse cx="318" cy="220" rx="64" ry="40" transform="rotate(-14 318 220)"/>
+    <rect x="226" y="198" width="60" height="34" rx="14"/>
+  </g>
+  <circle cx="198" cy="222" r="16" fill="#FFFDF8"/>
+  <circle cx="314" cy="222" r="16" fill="#FFFDF8"/>
+  <circle cx="199" cy="230" r="9" fill="#1F1A18"/>
+  <circle cx="313" cy="230" r="9" fill="#1F1A18"/>
+
+  <!-- Мордочка: светлая, нос, улыбка. -->
+  <ellipse cx="256" cy="286" rx="66" ry="44" fill="#F4EEE6"/>
+  <ellipse cx="256" cy="266" rx="18" ry="12" fill="#3B3532"/>
+  <path d="M256 278 Q256 294 242 298 M256 278 Q256 294 270 298" stroke="#3B3532" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+  <!-- Открытая книга: обложка, страницы, строчки. -->
+  <path d="M84 350 Q170 332 256 366 Q342 332 428 350 L428 470 Q342 450 256 488 Q170 450 84 470 Z" fill="#C9694E"/>
+  <path d="M102 342 Q180 326 256 360 L256 470 Q180 440 102 454 Z" fill="#FFFDF8"/>
+  <path d="M410 342 Q332 326 256 360 L256 470 Q332 440 410 454 Z" fill="#FFFDF8"/>
+  <path d="M256 360 L256 470" stroke="#E2D9CC" stroke-width="4"/>
+  <g stroke="#E2D9CC" stroke-width="8" stroke-linecap="round" fill="none">
+    <path d="M130 372 Q178 362 232 380"/>
+    <path d="M130 396 Q178 386 232 404"/>
+    <path d="M130 420 Q172 411 214 424"/>
+    <path d="M382 372 Q334 362 280 380"/>
+    <path d="M382 396 Q334 386 280 404"/>
+    <path d="M382 420 Q340 411 298 424"/>
+  </g>
+
+  <!-- Лапы держат книгу за края. -->
+  <ellipse cx="104" cy="402" rx="25" ry="33" fill="#3B3532"/>
+  <ellipse cx="408" cy="402" rx="25" ry="33" fill="#3B3532"/>
+</svg>

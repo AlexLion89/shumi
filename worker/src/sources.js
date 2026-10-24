@@ -1,0 +1,61 @@
+// Каталоги книг: адрес запроса и разбор ответа в общий вид
+//   { src, id, title, authors: [], year, cover, pages, url }
+// Настоящие ответы лежат образцами в tests/fixtures: сменит каталог формат — упадёт тест.
+
+// Виды произведений FantLab, которые похожи на «книгу»; рецензии, статьи и микрорассказы не нужны.
+const FANTLAB_TYPES = new Set(["novel", "story", "shortstory", "novella", "cycle", "collection", "epic",
+  "fairy-tale", "documental", "comix", "popular"]);
+
+// Пересказы чужих книг, которыми LitRes забивает выдачу: «Ключевые идеи книги…», «Саммари…», «… Кратко».
+const RETELLING = /^(ключевые идеи|саммари|краткое содержание|инфографика|конспект|обзор книги|summary|workbook)|\.\s*кратко$/i;
+// То же в Open Library: пересказы, «Paperback - …» от случайных продавцов, наборы из нескольких книг.
+const JUNK_EN = /^(summary|workbook|study guide|analysis of|paperback\s*[-–])|summary (and|review)|collection set/i;
+// Сначала с обложкой: без неё в Open Library обычно дубли изданий и мусор. Порядок внутри групп — как у каталога.
+const coverFirst = items => [...items.filter(b => b.cover), ...items.filter(b => !b.cover)];
+
+const yearOf = s => { const m = /^(\d{4})/.exec(String(s ?? "")); return m ? Number(m[1]) : null; };
+const names = s => String(s ?? "").split(/,\s*/).map(x => x.trim()).filter(Boolean);
+
+export const SOURCES = {
+  // Недокументированный API, которым пользуется сам сайт LitRes; без CORS, поэтому только через Worker.
+  litres: {
+    url: q => `https://api.litres.ru/foundation/api/search?q=${encodeURIComponent(q)}&types=text_book&limit=12`,
+    parse: d => (d?.payload?.data ?? []).map(x => x.instance ?? x).filter(b => b?.id && b.title && !RETELLING.test(b.title)).map(b => ({
+      src: "litres", id: String(b.id), title: b.title,
+      authors: (b.persons ?? []).filter(p => p.role === "author").map(p => p.full_name).filter(Boolean),
+      year: yearOf(b.date_written_at),
+      // cover_url — «/pub/c/cover/<id>.jpg», полный размер до полумегабайта; cover_200 — около 20 КБ.
+      cover: b.cover_url ? "https://cdn.litres.ru" + b.cover_url.replace("/pub/c/cover/", "/pub/c/cover_200/") : null,
+      pages: null,
+      url: b.url ? "https://www.litres.ru" + b.url : null,
+    })),
+  },
+
+  fantlab: {
+    url: q => `https://api.fantlab.ru/search-works?q=${encodeURIComponent(q)}&page=1`,
+    parse: d => ((Array.isArray(d) ? d : d?.matches) ?? []).filter(m => m?.work_id && FANTLAB_TYPES.has(m.name_eng)).map(m => {
+      const pic = m.pic_edition_id || m.pic_edition_id_auto;
+      return {
+        src: "fantlab", id: String(m.work_id), title: m.rusname || m.name,
+        authors: names(m.all_autor_rusname || m.autor_rusname),
+        year: m.year || null,
+        cover: pic ? `https://fantlab.ru/images/editions/big/${pic}` : null,
+        pages: null,
+        url: `https://fantlab.ru/work${m.work_id}`,
+      };
+    }),
+  },
+
+  openlibrary: {
+    url: q => `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=12`
+      + "&fields=key,title,author_name,first_publish_year,cover_i,number_of_pages_median",
+    parse: d => coverFirst((d?.docs ?? []).filter(x => x?.key && x.title && !JUNK_EN.test(x.title)).map(x => ({
+      src: "openlibrary", id: x.key.replace("/works/", ""), title: x.title,
+      authors: x.author_name ?? [],
+      year: x.first_publish_year || null,
+      cover: x.cover_i ? `https://covers.openlibrary.org/b/id/${x.cover_i}-M.jpg` : null,
+      pages: x.number_of_pages_median || null,
+      url: "https://openlibrary.org" + x.key,
+    }))),
+  },
+};
