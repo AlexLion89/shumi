@@ -43,7 +43,7 @@ const books = n => `${n} ${plural(n, "книга", "книги", "книг")}`;
 const short = t => (t.length > 40 ? t.slice(0, 38) + "…" : t);
 const nowIso = () => new Date().toISOString();
 
-let store = null, fb = null;
+let store = null, fb = null, ghClient = null;
 
 // ---------- вход
 
@@ -69,7 +69,7 @@ $("login-form").addEventListener("submit", async e => {
 });
 
 function start(key) {
-  const client = github({ token: key, base: GH });
+  const client = ghClient = github({ token: key, base: GH });
   store = createStore({ storage: ls, client, onChange: render });
   fb = createFeedback({ storage: ls, client, newId, onChange: renderFeedback });
   $("login").hidden = true;
@@ -142,13 +142,26 @@ const emptyState = (title, text, action) => el("div", { class: "empty" },
   action ? el("p", {}, el("button", { class: "pill main", type: "button", onclick: () => { location.hash = "find"; } }, action)) : null);
 const byNewest = (a, b) => String(b.updated ?? b.added).localeCompare(String(a.updated ?? a.added));
 
+// «Найти на полке» появляется, когда книг на экране от FILTER_FROM: по названию или автору, без учёта ё и регистра.
+const FILTER_FROM = 12;
+const fold = s => String(s ?? "").toLowerCase().replace(/ё/g, "е");
+function filtered(input, books) {
+  input.hidden = books.length < FILTER_FROM && !input.value;
+  const q = fold(input.value.trim());
+  return q ? books.filter(b => fold(`${b.title} ${(b.authors ?? []).join(" ")}`).includes(q)) : books;
+}
+const nothingFound = () => el("p", { class: "sub" }, "На полке такой нет. Поискать в каталогах — вкладка «Найти».");
+
 function viewShelf(s) {
-  const reading = list(s).filter(b => b.shelf === "reading").sort(byNewest);
-  const { years, undated } = readByYear(s);
+  const all = list(s).filter(b => b.shelf === "reading" || b.shelf === "read");
+  const mine = filtered($("f-shelf"), all), q = $("f-shelf").value.trim();
+  const shown = { version: 1, books: Object.fromEntries(mine.map(({ id, ...b }) => [id, b])) };
+  const reading = list(shown).filter(b => b.shelf === "reading").sort(byNewest);
+  const { years, undated } = readByYear(shown);
   const nothing = !reading.length && !years.size && !undated.length;
-  fill($("v-shelf"),
-    el("h1", {}, "Полка"),
-    nothing ? emptyState("Полка пока пустая", "Найди книгу, которую читаешь или уже прочитала, — и она встанет сюда.", "Найти книгу") : null,
+  fill($("b-shelf"),
+    nothing && q ? nothingFound() : null,
+    nothing && !q ? emptyState("Полка пока пустая", "Найди книгу, которую читаешь или уже прочитала, — и она встанет сюда.", "Найти книгу") : null,
     reading.length ? el("section", {}, el("h2", {}, "Читаю"), el("div", { class: "reading" }, reading.map(b =>
       el("div", { class: "reading-card" },
         el("button", { class: "tile", type: "button", "aria-label": b.title, onclick: () => openBook(b.id) }, coverEl(b)),
@@ -160,13 +173,15 @@ function viewShelf(s) {
 }
 
 function viewWant(s) {
-  const want = list(s).filter(b => b.shelf === "want").sort((a, b) => String(b.added).localeCompare(String(a.added)));
-  fill($("v-want"),
-    el("h1", {}, "Хочу прочитать"),
-    want.length ? [el("p", { class: "sub" }, books(want.length)), grid(want, false)]
-      : emptyState("Пока пусто", "Нашла книгу на потом — нажми «Хочу» в поиске.", "Найти книгу"),
+  const all = list(s).filter(b => b.shelf === "want").sort((a, b) => String(b.added).localeCompare(String(a.added)));
+  const want = filtered($("f-want"), all), q = $("f-want").value.trim();
+  fill($("b-want"),
+    want.length ? [el("p", { class: "sub" }, q ? `${books(want.length)} из ${all.length}` : books(want.length)), grid(want, false)]
+      : q ? nothingFound() : emptyState("Пока пусто", "Нашла книгу на потом — нажми «Хочу» в поиске.", "Найти книгу"),
   );
 }
+$("f-shelf").addEventListener("input", () => render());
+$("f-want").addEventListener("input", () => render());
 
 // ---------- поиск
 
@@ -263,8 +278,11 @@ function viewStats(s, arg) {
       el("span", {}, MONTHS[m])))),
     st.noMonth ? el("p", { class: "sub", style: "text-align:center" }, `и ещё ${books(st.noMonth)} — без месяца`) : null,
     st.avg ? el("p", { class: "avg" }, "Средняя оценка ", el("b", {}, st.avg.toFixed(1).replace(".", ",")), " ", el("span", { class: "star" }, "★")) : null,
+    st.count ? el("p", { class: "share-row" }, el("button", { class: "pill main", type: "button", onclick: () => openStory(y) }, "Поделиться итогами")) : null,
     st.books.length ? el("div", { class: "mosaic" }, st.books.map(b => tile(b, false)))
       : el("p", { class: "sub", style: "text-align:center" }, "В этом году пока ничего не прочитано."),
+    st.fives.length ? [el("h2", {}, "Любимые · ", el("span", { class: "star" }, "★★★★★")),
+      el("div", { class: "mosaic" }, st.fives.map(b => tile(b, false)))] : null,
     el("section", { class: "settings" },
       el("h2", {}, "Данные"),
       el("p", { class: "sub" }, "Полка хранится в GitHub, каждое изменение — отдельной записью: ничего не потеряется, даже если сменить телефон."),
@@ -285,6 +303,123 @@ function downloadCSV() {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+// ---------- картинка «Итоги года» для сторис, 1080×1920 — как сторис про книги за год со скриншотов Вики.
+// Обложки: копия из shumi-data через GitHub API (с CORS — её можно рисовать на canvas; кладёт задание backup.yml),
+// иначе адрес каталога, если он отдаёт CORS (LitRes, Open Library); иначе — «корешок» с названием.
+
+const FONT = '-apple-system, "SF Pro Display", "Segoe UI", Roboto, sans-serif';
+
+async function coverBitmap(b) {
+  try { const blob = await ghClient.files.blob(`covers/${b.id}.jpg`); if (blob) return await createImageBitmap(blob); } catch { /* нет копии */ }
+  if (b.cover) {
+    // Не дольше 8 с: один медленный каталог не должен держать всю картинку.
+    try { const r = await fetchT(b.cover, 8000); if (r.ok) return await createImageBitmap(await r.blob()); } catch { /* без CORS или не дождались */ }
+  }
+  return null;
+}
+
+function roundRect(g, x, y, w, h, r) {
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r);
+  g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r);
+  g.arcTo(x, y, x + w, y, r);
+  g.closePath();
+}
+
+// Строки текста, которые влезают в ширину w (для «корешка» без обложки).
+function wrap(g, text, w) {
+  const lines = [];
+  let line = "";
+  for (const word of String(text).split(/\s+/)) {
+    const next = line ? `${line} ${word}` : word;
+    if (g.measureText(next).width > w && line) { lines.push(line); line = word; } else line = next;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function storyImage(y) {
+  const st = yearStats(store.view(), y), W = 1080, H = 1920;
+  const cv = el("canvas", { width: W, height: H }), g = cv.getContext("2d");
+  g.fillStyle = "#F7EEE0";
+  g.fillRect(0, 0, W, H);
+
+  const icon = await createImageBitmap(await (await fetch("icon-192.png")).blob());
+  g.drawImage(icon, W / 2 - 75, 100, 150, 150);
+  g.textAlign = "center";
+  g.fillStyle = "#2A2A2A";
+  g.font = `600 58px ${FONT}`;
+  g.fillText(`Мой ${y} в книгах`, W / 2, 330);
+  g.font = `700 210px ${FONT}`;
+  g.fillText(String(st.count), W / 2, 560);
+  g.fillStyle = "#8A8580";
+  g.font = `400 46px ${FONT}`;
+  g.fillText(plural(st.count, "книга прочитана", "книги прочитаны", "книг прочитано"), W / 2, 630);
+  if (st.avg) g.fillText(`средняя оценка ${st.avg.toFixed(1).replace(".", ",")} ★`, W / 2, 700);
+
+  // Мозаика: столько столбцов, чтобы все обложки 2:3 влезли в рамку; последний ряд — по центру.
+  const list = st.books.slice(0, 120), n = list.length;
+  const box = { x: 70, y: st.avg ? 770 : 720, w: W - 140, h: 0 };
+  box.h = 1800 - box.y;
+  let lay;
+  for (let cols = 1; cols <= 14 && !lay; cols++) {
+    const gap = Math.max(10, Math.round(110 / cols)), cw = (box.w - gap * (cols - 1)) / cols, ch = cw * 1.5, rows = Math.ceil(n / cols);
+    if (rows * ch + gap * (rows - 1) <= box.h || cols === 14) lay = { cols, gap, cw, ch, rows };
+  }
+  const bitmaps = await Promise.all(list.map(coverBitmap));
+  const top = box.y + Math.max(0, (box.h - (lay.rows * lay.ch + lay.gap * (lay.rows - 1))) / 2);
+  list.forEach((b, i) => {
+    const row = Math.floor(i / lay.cols), inRow = Math.min(lay.cols, n - row * lay.cols), col = i % lay.cols;
+    const x = box.x + (box.w - (inRow * lay.cw + (inRow - 1) * lay.gap)) / 2 + col * (lay.cw + lay.gap);
+    const yy = top + row * (lay.ch + lay.gap), r = Math.max(4, lay.cw * 0.05);
+    g.save();
+    g.shadowColor = "rgba(60, 40, 20, .28)";
+    g.shadowBlur = lay.cw * 0.12;
+    g.shadowOffsetY = lay.cw * 0.03;
+    roundRect(g, x, yy, lay.cw, lay.ch, r);
+    g.fillStyle = "#E3D2B6";
+    g.fill();
+    g.restore();
+    g.save();
+    roundRect(g, x, yy, lay.cw, lay.ch, r);
+    g.clip();
+    const bm = bitmaps[i];
+    if (bm) {
+      const k = Math.max(lay.cw / bm.width, lay.ch / bm.height), sw = lay.cw / k, sh = lay.ch / k;
+      g.drawImage(bm, (bm.width - sw) / 2, (bm.height - sh) / 2, sw, sh, x, yy, lay.cw, lay.ch);
+    } else {
+      g.fillStyle = "#2A2A2A";
+      const fs = Math.max(12, Math.round(lay.cw * 0.12));
+      g.font = `600 ${fs}px ${FONT}`;
+      const lines = wrap(g, b.title, lay.cw * 0.84).slice(0, 5);
+      lines.forEach((l, j) => g.fillText(l, x + lay.cw / 2, yy + lay.ch / 2 - ((lines.length - 1) * fs * 1.2) / 2 + j * fs * 1.2 + fs * 0.35));
+    }
+    g.restore();
+  });
+
+  g.fillStyle = "#8A8580";
+  g.font = `400 34px ${FONT}`;
+  g.fillText(n < st.books.length ? `и ещё ${books(st.books.length - n)} · Книжная полка` : "Книжная полка", W / 2, 1870);
+  return new Promise((ok, fail) => cv.toBlob(b => (b ? ok(b) : fail(new Error("не нарисовалось"))), "image/png"));
+}
+
+async function openStory(y) {
+  openSheet(() => el("div", { class: "sheet-body" }, el("h2", {}, `Итоги ${y}`), el("p", { class: "sub" }, "Рисую картинку…")), () => "story-wait");
+  let blob;
+  try { blob = await storyImage(y); } catch (e) { closeSheet(); toast("Не получилось нарисовать: " + e.message); return; }
+  const url = URL.createObjectURL(blob), file = new File([blob], `итоги-${y}.png`, { type: "image/png" });
+  // «Поделиться» — отдельным нажатием: iOS даёт открыть меню только сразу по касанию, а рисование занимает время.
+  const share = navigator.canShare?.({ files: [file] })
+    ? el("button", { class: "pill main", type: "button", onclick: () => navigator.share({ files: [file] }).catch(() => {}) }, "Поделиться")
+    : el("a", { class: "pill main", href: url, download: file.name }, "Сохранить картинку");
+  openSheet(() => el("div", { class: "sheet-body" },
+    el("img", { class: "story-preview", src: url, alt: `Итоги ${y}` }),
+    el("p", { class: "sub", style: "margin:0" }, "В Instagram — «Поделиться» → Instagram, или сохрани картинку и выложи в сторис."),
+    el("div", { class: "sheet-foot" }, el("button", { class: "link danger", type: "button", onclick: closeSheet }, "Закрыть"), share)), () => url);
 }
 
 // ---------- шторка: карточка книги, «Прочитала», «Добавить вручную»

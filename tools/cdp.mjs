@@ -24,12 +24,12 @@ export async function launch({ port = 9333, dark = false } = {}) {
   let target;
   for (let i = 0; i < 50 && !target; i++) {
     await sleep(200);
-    try { target = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(t => t.type === "page"); } catch { /* ещё стартует */ }
+    try { target = (await (await fetch(`http://127.0.0.1:${port}/json/list`, { signal: AbortSignal.timeout(2000) })).json()).find(t => t.type === "page"); } catch { /* ещё стартует */ }
   }
   if (!target) { proc.kill(); throw new Error("браузер не поднялся"); }
 
   const ws = new WebSocket(target.webSocketDebuggerUrl);
-  await new Promise((ok, fail) => { ws.onopen = ok; ws.onerror = fail; });
+  await new Promise((ok, fail) => { ws.onopen = ok; ws.onerror = fail; setTimeout(() => fail(new Error("браузер не открыл соединение отладки")), 10000); });
   let id = 0;
   const waiting = new Map(), errors = [];
   ws.onmessage = m => {
@@ -38,7 +38,13 @@ export async function launch({ port = 9333, dark = false } = {}) {
     if (d.method === "Runtime.exceptionThrown") errors.push(d.params.exceptionDetails.exception?.description ?? d.params.exceptionDetails.text);
     if (d.method === "Runtime.consoleAPICalled" && d.params.type === "error") errors.push(d.params.args.map(a => a.value ?? a.description).join(" "));
   };
-  const send = (method, params = {}) => new Promise((ok, fail) => { const n = ++id; waiting.set(n, { ok, fail }); ws.send(JSON.stringify({ id: n, method, params })); });
+  // Каждая команда браузеру — не дольше 60 с: зависший браузер не должен вешать проверку.
+  const send = (method, params = {}) => new Promise((ok, fail) => {
+    const n = ++id;
+    const t = setTimeout(() => { waiting.delete(n); fail(new Error(`браузер не ответил на ${method}`)); }, 60000);
+    waiting.set(n, { ok: v => { clearTimeout(t); ok(v); }, fail: e => { clearTimeout(t); fail(e); } });
+    ws.send(JSON.stringify({ id: n, method, params }));
+  });
 
   await send("Runtime.enable");
   await send("Page.enable");
@@ -84,7 +90,13 @@ export async function launch({ port = 9333, dark = false } = {}) {
       const { writeFileSync } = await import("node:fs");
       writeFileSync(file, Buffer.from(data, "base64"));
     },
-    async close() { try { ws.close(); } catch {} proc.kill(); await sleep(300); try { rmSync(profile, { recursive: true, force: true }); } catch {} },
+    async close() {
+      try { await send("Browser.close"); } catch { /* уже закрыт */ }
+      try { ws.close(); } catch {}
+      proc.kill();
+      await sleep(500);
+      try { rmSync(profile, { recursive: true, force: true }); } catch {}
+    },
   };
   return page;
 }

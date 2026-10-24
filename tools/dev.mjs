@@ -43,14 +43,19 @@ function demo() {
 
 // ---------- заглушка GitHub API
 
-const gh = fakeGitHub(serialize(process.argv.includes("--empty") ? { version: 1, books: {} } : demo()));
-const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, OPTIONS" };
+const shelf = process.argv.includes("--empty") ? { version: 1, books: {} } : demo();
+const gh = fakeGitHub(serialize(shelf));
+// Копии обложек, как их кладёт задание backup.yml в shumi-data (для картинки «Итоги года»), — фоном.
+for (const [id, b] of Object.entries(shelf.books)) {
+  if (b.cover) fetch(b.cover).then(r => (r.ok ? r.arrayBuffer() : null)).then(a => a && gh.setFile(`covers/${id}.jpg`, new Uint8Array(a))).catch(() => {});
+}
+const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS" };
 createServer(async (req, res) => {
   if (req.method === "OPTIONS") { res.writeHead(204, CORS).end(); return; }
-  const body = req.method === "PUT" ? (await readBody(req)).toString("utf8") : undefined;
-  const r = await gh.fetch("https://fake.github" + req.url, { method: req.method, headers: { Authorization: req.headers.authorization }, body });
-  res.writeHead(r.status, { "Content-Type": "application/json", ...CORS }).end(await r.text());
-  if (req.method === "PUT") console.log("коммит:", gh.commits.at(-1).message.split("\n")[0]);
+  const body = ["PUT", "DELETE"].includes(req.method) ? (await readBody(req)).toString("utf8") : undefined;
+  const r = await gh.fetch("https://fake.github" + req.url, { method: req.method, headers: { Authorization: req.headers.authorization, Accept: req.headers.accept }, body });
+  res.writeHead(r.status, { "Content-Type": r.headers.get("content-type") ?? "application/octet-stream", ...CORS }).end(Buffer.from(await r.arrayBuffer()));
+  if (["PUT", "DELETE"].includes(req.method) && r.ok) console.log("коммит:", gh.commits.at(-1).message.split("\n")[0]);
 }).listen(8788, () => console.log("GitHub: http://localhost:8788 (ключ «t»)"));
 
 // ---------- Worker

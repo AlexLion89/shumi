@@ -60,6 +60,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 input[type=search], input.text, textarea.text { width: 100%; font: inherit; font-size: 17px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 14px;
   background: var(--card); color: var(--fg); outline: none; -webkit-appearance: none; appearance: none; }
 input[type=search]:focus, input.text:focus, textarea.text:focus { border-color: var(--accent); }
+.filter { margin: 6px 0 4px; font-size: 16px !important; padding: 9px 14px !important; }
 textarea.text { resize: vertical; }
 .sources { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; min-height: 26px; }
 .src { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--muted); }
@@ -158,3 +159,7 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / .35); }
          max-width: calc(100% - 32px); display: flex; gap: 14px; align-items: center; background: var(--fg); color: var(--bg);
          padding: 10px 16px; border-radius: 14px; font-size: 14px; box-shadow: var(--shadow); }
 .toast button { border: 0; background: none; color: var(--star); font-weight: 600; padding: 0; }
+
+/* Картинка «Итоги года» */
+.share-row { text-align: center; margin: 14px 0 0; }
+.story-preview { display: block; width: auto; max-width: 100%; max-height: 62vh; margin: 0 auto; border-radius: 14px; box-shadow: var(--shadow); }

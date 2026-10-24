@@ -13,6 +13,8 @@ mkdirSync(out, { recursive: true });
 const APP = "http://localhost:8760/?gh=http://localhost:8788&token=t";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let failed = 0;
+// Сторож: проверка, которая идёт дольше 8 минут, — сбой, а не вечное ожидание.
+setTimeout(() => { console.log("FAIL проверка зависла (8 минут)"); process.exit(1); }, 8 * 60 * 1000).unref();
 const check = (ok, what) => { console.log(`${ok ? "PASS" : "FAIL"} ${what}`); if (!ok) failed++; };
 
 async function dev(...args) {
@@ -132,6 +134,31 @@ for (const dark of [false, true]) {
       await page.until(`!document.getElementById('v-${v}').hidden && document.querySelectorAll('#v-${v} img').length > 0`);
       await sleep(2500);   // обложки грузятся с FantLab, LitRes и Open Library
       await page.shot(join(out, `${t}-${v}.png`), { full: true });
+    }
+    if (!dark) {
+      // «Найти на полке»: при 6 книгах не видна; вписанный текст оставляет только подходящие.
+      await page.goto(`${APP}#shelf`);
+      await page.until("document.querySelectorAll('#v-shelf .tile').length > 3");
+      check(await page.eval("document.getElementById('f-shelf').hidden"), "мало книг — строки «найти на полке» нет");
+      await page.type("#f-shelf", "зулейха");
+      await page.until("document.querySelectorAll('#v-shelf .shelves .tile').length === 1");
+      check(await page.eval("document.querySelector('#v-shelf .tile').getAttribute('aria-label').startsWith('Зулейха')"), "«зулейха» — на полке одна «Зулейха открывает глаза»");
+      await page.type("#f-shelf", "");
+
+      // Картинка «Итоги года»: 1080×1920, обложки — копии из репозитория (FantLab без CORS иначе не нарисовать).
+      await page.goto(`${APP}#stats/2026`);
+      await page.until("[...document.querySelectorAll('#v-stats button')].some(b => b.textContent === 'Поделиться итогами')");
+      await sleep(3000);   // заглушка GitHub докачивает копии обложек
+      await page.click("#v-stats button", "Поделиться итогами");
+      await page.until("document.querySelector('#sheet .story-preview')?.complete && document.querySelector('#sheet .story-preview').naturalWidth > 0", 30000);
+      const size = await page.eval("[document.querySelector('#sheet .story-preview').naturalWidth, document.querySelector('#sheet .story-preview').naturalHeight].join('x')");
+      check(size === "1080x1920", `картинка для сторис ${size}`);
+      const png = await page.eval(`fetch(document.querySelector('#sheet .story-preview').src).then(r => r.blob()).then(b => new Promise(ok => {
+        const f = new FileReader(); f.onload = () => ok(f.result.split(",")[1]); f.readAsDataURL(b); }))`);
+      const { writeFileSync } = await import("node:fs");
+      writeFileSync(join(out, "story-2026.png"), Buffer.from(png, "base64"));
+      await page.shot(join(out, "light-story-sheet.png"));
+      await page.click("#sheet .link", "Закрыть");
     }
     await page.goto(`${APP}#shelf`);
     await page.until("document.querySelectorAll('#v-shelf .tile').length > 3");
