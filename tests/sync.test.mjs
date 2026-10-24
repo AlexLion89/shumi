@@ -2,7 +2,7 @@
 // поддельном fetch с настоящими кодами ответов GitHub.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { AuthError, github } from "../site/github.js";
+import { AuthError, cleanKey, github } from "../site/github.js";
 import { apply, emptyShelf, parse, serialize } from "../site/shelf.js";
 import { createStore } from "../site/sync.js";
 import { fakeGitHub, memStorage } from "./helpers.mjs";
@@ -91,4 +91,11 @@ test("сразу после своей записи файл не перечит
   t += 20000;                                          // а позже — перечитывается как обычно
   await store.sync();
   assert.deepEqual(store.view().books, {});
+});
+
+test("ключ, вставленный с мусором, чистится; с кириллицей — «ключ не подходит», а не «нет связи»", async () => {
+  assert.equal(cleanKey(' \uFEFF"github_pat_AbC_123"\r\n'), "github_pat_AbC_123");
+  assert.equal(cleanKey("«github_pat_x»"), "github_pat_x");
+  const gh = fakeGitHub();
+  await assert.rejects(github({ token: "github_pat_ключ", base: gh.base, fetch: gh.fetch }).check(), AuthError);
 });

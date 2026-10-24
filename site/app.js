@@ -2,7 +2,7 @@
 // Данные — sync.js: копия полки на телефоне + файл shelf.json в приватном GitHub-репозитории (github.js).
 // Поиск — FantLab и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
 // почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут.
-import { AuthError, github } from "./github.js";
+import { AuthError, cleanKey, github } from "./github.js";
 import { merge } from "./rank.js";
 import { SHELVES, findSame, list, newId, readByYear, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
 import { SOURCES } from "./sources.js";
@@ -54,7 +54,7 @@ function showLogin(msg = "") {
 
 $("login-form").addEventListener("submit", async e => {
   e.preventDefault();
-  const key = $("key").value.trim();
+  const key = cleanKey($("key").value);
   if (!key) return;
   $("login-err").textContent = "Проверяю…";
   try {

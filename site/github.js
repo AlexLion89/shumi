@@ -12,11 +12,17 @@ export class Conflict extends Error {}    // файл успели поменя�
 const toB64 = s => { let bin = ""; for (const x of new TextEncoder().encode(s)) bin += String.fromCharCode(x); return btoa(bin); };
 const fromB64 = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, "")), c => c.charCodeAt(0)));
 
-export function github({ token, base = "https://api.github.com", fetch: f = (...a) => fetch(...a), timeout = 15000 }) {
-  async function call(path, opts = {}) {
+// Ключ, вставленный из мессенджера или заметок, бывает с пробелами, кавычками, переводом строки и BOM.
+export const cleanKey = s => String(s ?? "").replace(/[﻿\s"'«»`]/g, "");
+
+// path — другой файл в том же репозитории: проверка tools/e2e-github.mjs пишет во временный, не трогая полку.
+export function github({ token, base = "https://api.github.com", path = PATH, fetch: f = (...a) => fetch(...a), timeout = 15000 }) {
+  async function call(url, opts = {}) {
+    // Не-латиница в заголовке роняет fetch раньше GitHub, и вышло бы «нет связи» вместо «ключ не подходит».
+    if (!/^[!-~]+$/.test(token)) throw new AuthError("в ключе лишние символы");
     const c = new AbortController(), t = setTimeout(() => c.abort(), timeout);
     try {
-      const r = await f(base + path, {
+      const r = await f(base + url, {
         ...opts, cache: "no-store", signal: c.signal,
         headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", ...opts.headers },
       });
@@ -29,7 +35,7 @@ export function github({ token, base = "https://api.github.com", fetch: f = (...
       return r;
     } finally { clearTimeout(t); }
   }
-  const file = `/repos/${REPO}/contents/${PATH}`;
+  const file = `/repos/${REPO}/contents/${path}`;
 
   return {
     // Проверка ключа при входе: приватный репозиторий без доступа GitHub показывает как 404.

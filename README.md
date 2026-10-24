@@ -23,6 +23,10 @@
 node --test tests/*.test.mjs       # данные полки, отправка в GitHub (заглушка с настоящими кодами ответов), поиск
 node tools/ui-check.mjs            # путь Вики в headless Edge: найти → «Хочу» / «Прочитала» → коммит; снимки экранов
 node tools/dev.mjs                 # http://localhost:8760/?gh=http://localhost:8788&token=t — демо-полка, заглушка GitHub
+
+# с настоящим ключом (файл с токеном; значение никуда не выводится)
+SHUMI_TOKEN_FILE=~/.shumi-dev-token node tools/e2e-github.mjs   # два «устройства» пишут во временный файл shumi-data, потом он удаляется
+SHUMI_TOKEN_FILE=~/.shumi-dev-token node tools/live-check.mjs    # живой сайт читает полку (только чтение)
 ```
 
 Выкладка — пуш в `main`: GitHub Actions гоняет тесты, выкладывает сайт на Pages (подставляет версию в `sw.js`)
