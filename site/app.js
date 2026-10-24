@@ -2,6 +2,8 @@
 // Замеры копятся в localStorage («netlog») и уходят на Worker пачками, когда он доступен;
 // сводка по всем устройствам — GET <API>/netlog/summary. Адрес API можно подменить: ?api=…
 
+import { merge } from "./rank.js";
+
 const API = new URLSearchParams(location.search).get("api") || "https://shumi-api.sirenyov.workers.dev";
 const TIMEOUT = 10000;
 const SOURCES = { litres: "LitRes", fantlab: "FantLab", openlibrary: "Open Library" };
@@ -118,10 +120,6 @@ async function checkNet(rounds) {
 
 // ---------- поиск
 
-const norm = s => String(s ?? "").toLowerCase().replace(/ё/g, "е").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-// Одна книга из разных каталогов: название до первой точки/двоеточия/скобки + фамилия первого автора.
-const bookKey = b => norm(String(b.title).split(/[.:(]/)[0]) + "|" + norm(b.authors[0]).split(" ").pop();
-
 const noCover = b => el("div", { class: "cover none" }, (String(b.title).trim()[0] || "?").toUpperCase());
 function bookRow(b) {
   const cover = b.cover
@@ -146,16 +144,7 @@ function search(raw) {
     if (my !== seq) return;   // пока ждали, запрос сменился
     $("sources").replaceChildren(...order.map(s =>
       el("span", { class: "src " + (state[s]?.cls ?? "wait") }, SOURCES[s], " ", state[s]?.text ?? "…")));
-    const merged = new Map();
-    for (const s of order) for (const b of got[s] ?? []) {
-      const key = bookKey(b), m = merged.get(key);
-      if (!m) merged.set(key, { ...b, srcs: [s] });
-      else {
-        if (!m.srcs.includes(s)) m.srcs.push(s);
-        if (!m.cover && b.cover) m.cover = b.cover;
-      }
-    }
-    const list = [...merged.values()].slice(0, 30);
+    const list = merge(got, order, q).slice(0, 30);
     const done = order.every(s => state[s]);
     $("results").replaceChildren(...(list.length ? list.map(bookRow)
       : done ? [el("li", { class: "empty" }, "Ничего не нашлось. Попробуй по-другому: только фамилию автора или часть названия.")] : []));
