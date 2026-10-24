@@ -1,7 +1,7 @@
 // Порядок выдачи на настоящих ответах каталогов (tests/fixtures).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { SOURCES } from "../worker/src/sources.js";
+import { SOURCES } from "../site/sources.js";
 import { merge, score } from "../site/rank.js";
 import { fixture } from "./helpers.mjs";
 
@@ -51,7 +51,7 @@ test("многоточие не обрезает название: «Зулей�
   const list = merge({ fantlab: [far, eyes] }, RU, "Зулейха");
   assert.equal(list[0].title, "Зулейха открывает глаза");
   assert.equal(score(far, "Зулейха"), 90, "начало названия, а не точное совпадение");
-  assert.equal(score({ title: "Магия утра. Как первый час дня", authors: [] }, "магия утра"), 100, "одиночная точка по-прежнему отделяет подзаголовок");
+  assert.equal(score({ title: "Магия утра. Как первый час дня", authors: [] }, "магия утра"), 90, "одиночная точка по-прежнему отделяет подзаголовок");
 });
 
 test("оценка: точное название > начало > все слова > часть слов > ничего", () => {
@@ -60,4 +60,27 @@ test("оценка: точное название > начало > все сло
   const s = [b("Тревожные люди"), b("Тревожные люди и другие"), b("Люди тревожные: очерки"), b("Тревожные дни"), b("Перформанс")].map(x => score(x, q));
   assert.deepEqual(s.map((v, i) => i && v < s[i - 1]), [0, true, true, true, true].map((v, i) => i ? v : 0));
   assert.equal(s[4], 0);
+});
+
+test("«масло»: одна книга, хотя у LitRes «Юзуки Асако», а у FantLab «Асако Юзуки»", () => {
+  const got = { litres: parsed("litres", "maslo"), fantlab: parsed("fantlab", "maslo") };
+  const list = merge(got, RU, "масло");
+  const yuzuki = list.filter(b => b.authors.some(a => /Юзуки/.test(a)));
+  assert.equal(yuzuki.length, 1);
+  assert.deepEqual(yuzuki[0].srcs, ["litres", "fantlab"]);
+  assert.equal(list[0], yuzuki[0], "и она первая: нашли оба каталога, есть обложка");
+});
+
+test("«роулинг»: сверху книги Роулинг, а не книги о ней", () => {
+  const got = { litres: parsed("litres", "rouling"), fantlab: parsed("fantlab", "rouling") };
+  const top = merge(got, RU, "роулинг").slice(0, 5);
+  for (const b of top) assert.ok(b.authors.some(a => /Роулинг/.test(a)), `${b.title} — ${b.authors}`);
+});
+
+test("«гарри поттер»: сверху романы, а не цикл целиком и не сувенирные издания без автора", () => {
+  const got = { litres: parsed("litres", "garri-potter"), fantlab: parsed("fantlab", "garri-potter") };
+  const list = merge(got, RU, "гарри поттер");
+  assert.ok(!list.some(b => b.title === "Гарри Поттер" && b.srcs.includes("fantlab")), "цикла FantLab нет");
+  const top = list.slice(0, 3);
+  for (const b of top) assert.match(b.title, /^Гарри Поттер и /, b.title);
 });

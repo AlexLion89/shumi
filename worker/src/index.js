@@ -9,12 +9,12 @@
 //   GET  /netlog/summary    → сводка замеров за 14 дней: по дням (МСК), устройствам и видам запросов
 //
 // Привязки: KV — кеш поиска, DB — база D1 (миграции в ../migrations).
-import { SOURCES } from "./sources.js";
+import { SOURCES } from "../../site/sources.js";
 
 const ORIGINS = ["https://shumi.sirenyov.link", "http://localhost:8760", "http://127.0.0.1:8760"];
 const UA = "shumi/0.1 (+https://shumi.sirenyov.link)";
 const SOURCE_TIMEOUT = 7000;   // Open Library бывает медленным: 4 с ему мало
-const KINDS = new Set(["ping-cf", "ping-gh", ...Object.keys(SOURCES).map(s => "search-" + s)]);
+const KINDS = new Set(["ping-cf", "ping-gh", "ping-ghapi", ...Object.keys(SOURCES).map(s => "search-" + s)]);
 const DAY = 86400000, MSK = 3 * 3600000;
 
 function cors(req) {

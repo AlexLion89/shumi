@@ -1,7 +1,7 @@
 // Разбор настоящих ответов каталогов (tests/fixtures, сохранены 24.10.2026).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { SOURCES } from "../worker/src/sources.js";
+import { SOURCES } from "../site/sources.js";
 import { fixture } from "./helpers.mjs";
 
 test("LitRes: название, автор без переводчиков, маленькая обложка, ссылка", () => {

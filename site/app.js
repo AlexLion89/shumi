@@ -1,19 +1,27 @@
-// Этап 0 полки: поиск по каталогам через Worker и замеры связи с этого телефона.
+// Этап 0 полки: поиск по каталогам и замеры связи с этого телефона.
+// FantLab и Open Library телефон спрашивает сам, как books.sirenyov.link: у Вики с мобильного Cloudflare
+// почти не отвечает (замеры 24.10.2026: 2 из 6 пингов, трафик через Гонконг). Через Worker — только LitRes.
 // Замеры копятся в localStorage («netlog») и уходят на Worker пачками, когда он доступен;
 // сводка по всем устройствам — GET <API>/netlog/summary. Адрес API можно подменить: ?api=…
 
 import { merge } from "./rank.js";
+import { SOURCES as CATALOGS } from "./sources.js";
 
 const API = new URLSearchParams(location.search).get("api") || "https://shumi-api.sirenyov.workers.dev";
 const TIMEOUT = 10000;
 const SOURCES = { litres: "LitRes", fantlab: "FantLab", openlibrary: "Open Library" };
+const DIRECT = new Set(["fantlab", "openlibrary"]);
 const KINDS = [
-  ["ping-cf", "Сервер полки"],
-  ["ping-gh", "Сайт"],
-  ["search-litres", "Поиск LitRes"],
+  ["ping-gh", "Сайт (GitHub Pages)"],
+  ["ping-ghapi", "GitHub API"],
+  ["ping-cf", "Сервер на Cloudflare"],
   ["search-fantlab", "Поиск FantLab"],
   ["search-openlibrary", "Поиск Open Library"],
+  ["search-litres", "Поиск LitRes (через Cloudflare)"],
 ];
+// Версия замеров: до 2 FantLab и Open Library тоже шли через Cloudflare. На экране — только текущая версия,
+// на сервер уходят все.
+const V = 2;
 
 const $ = id => document.getElementById(id);
 function el(tag, attrs = {}, ...kids) {
@@ -40,7 +48,7 @@ function record(k, ok, ms, err) {
   // На сервере замер уникален по (устройство, время, вид) — два замера одного вида в одну миллисекунду разводим.
   const at = Math.max(Date.now(), (lastAt[k] ?? 0) + 1);
   lastAt[k] = at;
-  log.push(ok ? { at, k, ok: 1, ms } : { at, k, ok: 0, ms, err });
+  log.push(ok ? { at, k, ok: 1, ms, v: V } : { at, k, ok: 0, ms, err, v: V });
   if (log.length > 1000) log = log.slice(-1000);
   save("netlog", log);
   renderNet();
@@ -61,7 +69,7 @@ async function measured(k, url) {
     const data = await r.json();
     const ms = Math.round(performance.now() - t0);
     record(k, true, ms);
-    if (k !== "ping-gh") flush();
+    flush();
     return { data, ms };
   } catch (e) {
     if (e.name === "AbortError") err = "timeout";
@@ -70,11 +78,13 @@ async function measured(k, url) {
   }
 }
 
-let flushing = false;
+// Замеры уходят на Worker, а он у Вики отвечает через раз — пробуем не чаще раза в 20 с.
+let flushing = false, lastFlush = 0;
 async function flush() {
   const batch = log.filter(e => !e.s).slice(0, 200);
-  if (flushing || !batch.length) return;
+  if (flushing || !batch.length || Date.now() - lastFlush < 20000) return;
   flushing = true;
+  lastFlush = Date.now();
   try {
     // text/plain — «простой» запрос без предварительного OPTIONS.
     const r = await fetchT(API + "/netlog", {
@@ -88,7 +98,7 @@ async function flush() {
 
 function renderNet() {
   const rows = KINDS.map(([k, name]) => {
-    const xs = log.filter(e => e.k === k);
+    const xs = log.filter(e => e.k === k && e.v === V);
     if (!xs.length) return null;
     const ok = xs.filter(e => e.ok), ms = ok.map(e => e.ms).sort((a, b) => a - b);
     const share = ok.length / xs.length;
@@ -98,7 +108,7 @@ function renderNet() {
       el("td", {}, ms.length ? "обычно " + sec(ms[Math.floor(ms.length / 2)]) : "—"));
   });
   $("net-table").replaceChildren(...rows.filter(Boolean));
-  const wait = log.filter(e => !e.s).length;
+  const wait = log.filter(e => !e.s).length;   // все версии: старые тоже ждут отправки
   $("net-sent").textContent = wait ? `Ждут отправки на сервер: ${wait}` : log.length ? "Все замеры на сервере." : "";
 }
 
@@ -109,8 +119,10 @@ async function checkNet(rounds) {
   $("net-check").disabled = true;
   for (let i = 0; i < rounds; i++) {
     await Promise.allSettled([
-      measured("ping-cf", API + "/ping"),
       measured("ping-gh", "ping.json?r=" + Math.random().toString(36).slice(2)),
+      // /rate_limit не расходует лимит GitHub (60 запросов в час на адрес — у мобильного оператора он общий).
+      measured("ping-ghapi", "https://api.github.com/rate_limit"),
+      measured("ping-cf", API + "/ping"),
     ]);
     if (i < rounds - 1) await new Promise(r => setTimeout(r, 1500));
   }
@@ -152,8 +164,12 @@ function search(raw) {
 
   draw();
   for (const s of order) {
-    measured("search-" + s, `${API}/search/${s}?q=${encodeURIComponent(q)}`)
-      .then(({ data, ms }) => { got[s] = data.items; state[s] = { cls: "ok", text: `${data.items.length} · ${sec(ms)}` }; })
+    const url = DIRECT.has(s) ? CATALOGS[s].url(q.toLowerCase()) : `${API}/search/${s}?q=${encodeURIComponent(q)}`;
+    measured("search-" + s, url)
+      .then(({ data, ms }) => {
+        got[s] = DIRECT.has(s) ? CATALOGS[s].parse(data).slice(0, 12) : data.items;
+        state[s] = { cls: "ok", text: `${got[s].length} · ${sec(ms)}` };
+      })
       .catch(e => { state[s] = { cls: "fail", text: e.name === "AbortError" ? "не дождались" : "не ответил" }; })
       .finally(draw);
   }
