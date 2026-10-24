@@ -6,8 +6,10 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#F7EEE0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1E1B19" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Полка">
-<title>Книжная полка · проверка поиска</title>
+<title>Книжная полка</title>
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -16,33 +18,44 @@
 <script type="module" src="app.js"></script>
 </head>
 <body>
-<main>
-  <header>
-    <img src="icon-192.png" alt="">
-    <div>
-      <h1>Книжная полка</h1>
-      <p class="sub">Проверка поиска и связи</p>
-    </div>
-  </header>
 
-  <form id="search-form" role="search">
-    <input id="q" type="search" placeholder="Название или автор" autocomplete="off" autocapitalize="off" enterkeyhint="search">
+<section id="login" class="login" hidden>
+  <img src="icon-192.png" alt="">
+  <h1>Книжная полка</h1>
+  <p>Введи ключ полки. Это нужно один раз — дальше телефон его запомнит.</p>
+  <form id="login-form">
+    <input id="key" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" placeholder="Ключ полки">
+    <button class="pill main" type="submit">Открыть полку</button>
   </form>
-  <div id="sources" class="sources" aria-live="polite"></div>
-  <ul id="results" class="results"></ul>
+  <p id="login-err" class="err" role="alert"></p>
+</section>
 
-  <section class="card" id="net">
-    <h2>Связь на этом телефоне</h2>
-    <table><tbody id="net-table"></tbody></table>
-    <p id="net-sent" class="muted"></p>
-    <button id="net-check" type="button">Проверить связь ещё раз</button>
-  </section>
+<div id="app" hidden>
+  <button id="sync" class="sync" type="button" hidden></button>
+  <main>
+    <section id="v-shelf" class="view"></section>
+    <section id="v-want" class="view" hidden></section>
+    <section id="v-find" class="view" hidden>
+      <h1>Найти книгу</h1>
+      <form id="find-form" role="search">
+        <input id="q" type="search" placeholder="Название или автор" autocomplete="off" autocapitalize="off" enterkeyhint="search">
+      </form>
+      <div id="find-status" class="sources" aria-live="polite"></div>
+      <ul id="results" class="results"></ul>
+      <button id="manual" class="link" type="button">Нет нужной книги? Добавить вручную</button>
+    </section>
+    <section id="v-stats" class="view" hidden></section>
+  </main>
+  <!-- Нижняя панель — как на books.sirenyov.link: значок из data-icon, подпись, у активной — полоска сверху. -->
+  <nav class="tabs">
+    <button type="button" data-tab="shelf" data-icon="📚">Полка</button>
+    <button type="button" data-tab="want" data-icon="🔖">Хочу</button>
+    <button type="button" data-tab="find" data-icon="🔍">Найти</button>
+    <button type="button" data-tab="stats" data-icon="📊">Итоги</button>
+  </nav>
+</div>
 
-  <section class="card about">
-    <p>Это первый шаг будущей полки. Поищи книги, которые читала или хочешь прочитать, — по-русски и по-английски,
-      с мобильного интернета без VPN: дома, на улице, в метро.</p>
-    <p>Страница сама записывает, какие запросы дошли и как быстро. Ничего нажимать не нужно — просто пользуйся.</p>
-  </section>
-</main>
+<dialog id="sheet" class="sheet"></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
 </body>
 </html>
