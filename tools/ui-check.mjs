@@ -67,7 +67,7 @@ try {
   check(trev?.shelf === "read" && trev.rating === 4 && trev.reads?.[0] === month, `в GitHub: «Тревожные люди» прочитано, ★4, ${month}`);
 
   await page.click("nav.tabs button", "Полка");
-  await page.until("document.querySelectorAll('#v-shelf .grid .tile').length === 1");
+  await page.until("document.querySelectorAll('#v-shelf .shelves .tile').length === 1");
   check(await page.eval(`document.querySelector('#v-shelf h2').textContent.includes('${month.slice(0, 4)} · 1 книга')`), "полка: год и «1 книга»");
   await page.click("#v-shelf .tile");
   await page.until("document.getElementById('sheet').open");
@@ -135,7 +135,7 @@ for (const dark of [false, true]) {
     }
     await page.goto(`${APP}#shelf`);
     await page.until("document.querySelectorAll('#v-shelf .tile').length > 3");
-    await page.click("#v-shelf .grid .tile");
+    await page.click("#v-shelf .shelves .tile");
     await page.until("document.getElementById('sheet').open");
     await sleep(1500);
     await page.shot(join(out, `${t}-card.png`));

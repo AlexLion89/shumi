@@ -1,12 +1,14 @@
 :root {
   --bg: #F7EEE0; --card: #FFFDF8; --fg: #2A2A2A; --muted: #8A8580; --line: #E8DDCB;
   --accent: #C9694E; --star: #E0A93B; --spine: linear-gradient(160deg, #EADBC3, #D8C3A3);
+  --plank: linear-gradient(#DCC6A4, #C5A57C);
   --shadow: 0 2px 8px rgb(60 40 20 / .16);
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root { --bg: #1E1B19; --card: #2A2623; --fg: #EDE7DF; --muted: #A29B94; --line: #3A3531;
-          --spine: linear-gradient(160deg, #3C3530, #2E2925); --shadow: 0 2px 8px rgb(0 0 0 / .5); }
+          --spine: linear-gradient(160deg, #3C3530, #2E2925); --shadow: 0 2px 8px rgb(0 0 0 / .5);
+          --plank: linear-gradient(#5A4A3C, #43372D); }
 }
 
 * { box-sizing: border-box; }
@@ -37,9 +39,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .cover.sm { width: 56px; flex: none; }
 .cover.none.initial { align-items: center; font-size: 22px; color: var(--muted); }
 .cover.big { width: 104px; flex: none; }
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 14px; }
-@media (min-width: 560px) { .grid { grid-template-columns: repeat(4, 1fr); } }
-.stars-sm { color: var(--star); font-size: 12px; letter-spacing: 1px; text-align: center; margin-top: 6px; }
+/* Полки: ряд обложек стоит на доске, звёзды — подписью под доской */
+.shelf-row { margin-bottom: 22px; }
+.row-books, .row-labels { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 0 14px; padding: 0 6px; }
+.row-books { align-items: end; }
+.plank { height: 9px; margin: 0 -2px; border-radius: 2px 2px 4px 4px; background: var(--plank);
+         box-shadow: 0 7px 10px -5px rgb(70 45 20 / .45); position: relative; z-index: 1; }
+.row-labels { margin-top: 7px; }
+.stars-sm { color: var(--star); font-size: 12px; letter-spacing: 1px; text-align: center; min-height: 1em; }
 
 /* Полка: «Читаю» */
 .reading { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }

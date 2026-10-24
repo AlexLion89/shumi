@@ -122,7 +122,21 @@ function coverEl(b, cls = "cover") {
 const tile = (b, withStars) => el("div", {},
   el("button", { class: "tile", type: "button", "aria-label": b.title, onclick: () => openBook(b.id) }, coverEl(b)),
   withStars && b.rating ? el("div", { class: "stars-sm" }, stars(b.rating)) : null);
-const grid = (bs, withStars) => el("div", { class: "grid" }, bs.map(b => tile(b, withStars)));
+// «По типу книжных полок» (ТЗ): ряд обложек стоит на полке, звёзды — подписью под полкой, как ценник на краю.
+// В ряду 3 книги на телефоне и 4 на широком экране.
+const WIDE = matchMedia("(min-width: 560px)");
+const cover = b => el("button", { class: "tile", type: "button", "aria-label": b.title, onclick: () => openBook(b.id) }, coverEl(b));
+function grid(bs, withStars) {
+  const n = WIDE.matches ? 4 : 3, rows = [];
+  for (let i = 0; i < bs.length; i += n) rows.push(bs.slice(i, i + n));
+  return el("div", { class: "shelves", style: `--n:${n}` }, rows.map(row => el("div", { class: "shelf-row" },
+    el("div", { class: "row-books" }, row.map(cover)),
+    el("div", { class: "plank" }),
+    withStars && row.some(b => b.rating)
+      ? el("div", { class: "row-labels" }, row.map(b => el("div", { class: "stars-sm", "aria-label": b.rating ? `${b.rating} из 5` : null }, b.rating ? stars(b.rating) : "")))
+      : null)));
+}
+WIDE.addEventListener("change", () => render());
 const emptyState = (title, text, action) => el("div", { class: "empty" },
   el("img", { src: "icon-192.png", alt: "" }), el("b", {}, title), el("div", {}, text),
   action ? el("p", {}, el("button", { class: "pill main", type: "button", onclick: () => { location.hash = "find"; } }, action)) : null);
