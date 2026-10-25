@@ -22,8 +22,9 @@ export function createStore({ storage, client, onChange = () => {}, delay = 1500
     try {
       setStatus("saving");
       if (!queue.length && now() - wrote > fresh) {
-        const r = await client.get();
-        if (r.sha !== base.sha) { base = r; save(); }
+        const r = await client.get(base.etag);   // не изменилась — 304 без тела
+        if (!r.same && r.sha !== base.sha) { base = r; save(); }
+        else if (!r.same && r.etag !== base.etag) { base.etag = r.etag; save(); }
       }
       // Пока шла отправка, могли появиться новые правки — отправляем, пока очередь не опустеет.
       while (queue.length) {

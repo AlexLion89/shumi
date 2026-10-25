@@ -82,12 +82,19 @@ export function fakeGitHub(text = '{\n  "version": 1,\n  "books": {}\n}\n') {
     const path = pathname.slice(prefix.length).split("/").map(decodeURIComponent).join("/");
     const f = gh.files.get(path);
     if (method === "GET") {
+      // ETag — как у GitHub: совпал с If-None-Match — 304 без тела (считаем их в gh.notModified).
+      const tagged = (etag, body) => {
+        if (opts.headers?.["If-None-Match"] === etag) { gh.notModified = (gh.notModified ?? 0) + 1; return new Response(null, { status: 304 }); }
+        const r = json(200, body);
+        r.headers.set("ETag", etag);
+        return r;
+      };
       if (f) {
         if (opts.headers?.Accept === "application/vnd.github.raw") return new Response(f.bytes, { status: 200 });
-        return json(200, { type: "file", content: b64(f.bytes), sha: f.sha });
+        return tagged(`W/"${f.sha}"`, { type: "file", content: b64(f.bytes), sha: f.sha });
       }
       const inDir = [...gh.files].filter(([p]) => p.startsWith(path + "/") && !p.slice(path.length + 1).includes("/"));
-      if (inDir.length) return json(200, inDir.map(([p, x]) => ({ type: "file", name: p.split("/").pop(), path: p, sha: x.sha })));
+      if (inDir.length) return tagged(`W/"${inDir.map(([, x]) => x.sha).join(".")}"`, inDir.map(([p, x]) => ({ type: "file", name: p.split("/").pop(), path: p, sha: x.sha })));
       return json(404, { message: "Not Found" });
     }
     const body = JSON.parse(opts.body);

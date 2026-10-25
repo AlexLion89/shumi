@@ -99,3 +99,15 @@ test("ключ, вставленный с мусором, чистится; с �
   const gh = fakeGitHub();
   await assert.rejects(github({ token: "github_pat_ключ", base: gh.base, fetch: gh.fetch }).check(), AuthError);
 });
+
+test("полка не изменилась — GitHub отвечает 304, на телефон ничего не скачивается; изменилась — скачивается", async () => {
+  const gh = fakeGitHub();
+  let t = 0;
+  const store = createStore({ storage: memStorage(), client: github({ token: "t", base: gh.base, fetch: gh.fetch }), now: () => (t += 60000) });
+  await store.sync();
+  await store.sync();
+  assert.equal(gh.notModified, 1);
+  gh.external(s => apply(s, [op("x", { title: "С планшета", shelf: "want", added: "1" })]));
+  await store.sync();
+  assert.equal(store.view().books.x.title, "С планшета");
+});

@@ -73,3 +73,13 @@ test("убранное на сервере исчезает и с телефон
   await fb.sync();
   assert.deepEqual(fb.list(), []);
 });
+
+test("папка замечаний не изменилась — 304, ответы не перечитываются", async () => {
+  const gh = fakeGitHub(), fb = make(gh);
+  await fb.add("Первое");
+  await fb.sync();
+  const before = gh.notModified ?? 0;
+  await fb.sync();
+  assert.equal(gh.notModified, before + 1);
+  assert.equal(fb.list().length, 1);
+});

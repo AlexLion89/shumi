@@ -188,33 +188,55 @@ $("f-want").addEventListener("input", () => render());
 let found = { list: [], state: {}, order: [], done: false };
 let seq = 0;
 
-function fetchT(url, ms = 12000) {
+function fetchT(url, ms = 12000, outer) {
   const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  outer?.addEventListener("abort", () => c.abort());
   return fetch(url, { signal: c.signal }).finally(() => clearTimeout(t));
 }
 
+// На мобильном важно не гонять лишнее:
+// — кириллица — только FantLab: Open Library на русские запросы отвечает мусором и медленно (~3 с даже по Wi-Fi);
+// — допечатала дальше — прежний поиск отменяется, а не тянет ответы, которые уже не нужны;
+// — тот же запрос в течение 10 минут — из памяти.
+const searchCache = new Map();
+let searchAbort = null;
+
 async function search(raw) {
   const q = raw.trim(), my = ++seq;
+  searchAbort?.abort();
   if (q.length < 2) { found = { list: [], state: {}, order: [], done: false }; renderResults(); return; }
-  const order = /[а-яё]/i.test(q) ? ["fantlab", "openlibrary"] : ["openlibrary", "fantlab"];
+  const order = /[а-яё]/i.test(q) ? ["fantlab"] : ["openlibrary", "fantlab"];
+  const key = q.toLowerCase(), hit = searchCache.get(key);
   const got = {}, state = {};
   const draw = () => {
     if (my !== seq) return;   // пока ждали, запрос сменился
     found = { list: merge(got, order, q).slice(0, 30), state, order, done: order.every(s => state[s]) };
     renderResults();
   };
+  if (hit && Date.now() - hit.at < 10 * 60000) {
+    Object.assign(got, hit.got);
+    for (const s of order) state[s] = { cls: "ok", text: String(got[s]?.length ?? 0) };
+    draw();
+    return;
+  }
+  const abort = searchAbort = new AbortController();
   draw();
   await Promise.all(order.map(async src => {
     try {
-      const r = await fetchT(SOURCES[src].url(q.toLowerCase()));
+      const r = await fetchT(SOURCES[src].url(key), 12000, abort.signal);
       if (!r.ok) throw new Error(String(r.status));
       got[src] = SOURCES[src].parse(await r.json()).slice(0, 15);
       state[src] = { cls: "ok", text: String(got[src].length) };
     } catch {
+      if (abort.signal.aborted) return;   // отменён новым запросом — молча
       state[src] = { cls: "fail", text: "не ответил" };
     }
     draw();
   }));
+  if (!abort.signal.aborted && order.every(s => got[s])) {
+    searchCache.set(key, { at: Date.now(), got: { ...got } });
+    if (searchCache.size > 30) searchCache.delete(searchCache.keys().next().value);
+  }
 }
 
 function viewFind() { renderResults(); }

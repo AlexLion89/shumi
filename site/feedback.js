@@ -46,7 +46,11 @@ export function createFeedback({ storage, client, newId, onChange = () => {}, no
 
   async function run() {
     for (const id of Object.keys(st.items)) if (st.items[id].dirty || st.items[id].deleted) { await push(id); save(); }
-    const remote = (await client.files.list("feedback")).filter(f => f.name.endsWith(".json"));
+    // Папка не изменилась с прошлого раза — 304 без тела: на мобильном это одна короткая проверка.
+    const listed = await client.files.list("feedback", st.etag);
+    if (!listed) { save(); return; }
+    st.etag = listed.etag;
+    const remote = listed.filter(f => f.name.endsWith(".json"));
     const ids = new Set();
     for (const f of remote) {
       const id = f.name.slice(0, -5), it = st.items[id];

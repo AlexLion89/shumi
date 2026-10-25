@@ -39,14 +39,18 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
   const at = p => `/repos/${REPO}/contents/${p.split("/").map(encodeURIComponent).join("/")}`;
   const fail = r => { throw new Error("GitHub ответил " + r.status); };
 
+  // etag — версия, которая уже есть на телефоне: не изменилось — GitHub отвечает 304 без тела, и на мобильном
+  // полка не скачивается заново при каждом открытии (304 к тому же не расходует лимит запросов).
+  const cond = etag => (etag ? { headers: { "If-None-Match": etag } } : {});
   const files = {
-    // Файл целиком: {text, sha} или null, если его нет.
-    async read(p) {
-      const r = await call(`${at(p)}?ref=main`);
+    // Файл целиком: {text, sha, etag}; null — файла нет; {same: true} — не изменился с etag.
+    async read(p, etag) {
+      const r = await call(`${at(p)}?ref=main`, cond(etag));
+      if (r.status === 304) return { same: true };
       if (r.status === 404) return null;
       if (!r.ok) fail(r);
       const d = await r.json();
-      return { text: fromB64(d.content), sha: d.sha };
+      return { text: fromB64(d.content), sha: d.sha, etag: r.headers.get("ETag") };
     },
     // Записать: sha — версия, поверх которой пишем (null — новый файл). Чужая версия — Conflict.
     async write(p, text, sha, message) {
@@ -67,13 +71,16 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
       if (r.status === 409 || r.status === 422) throw new Conflict("файл изменился");
       if (!r.ok) fail(r);
     },
-    // Файлы папки: [{name, path, sha}]; нет папки — [].
-    async list(dir) {
-      const r = await call(`${at(dir)}?ref=main`);
+    // Файлы папки: [{name, path, sha}] (у массива — etag); нет папки — []; null — не изменилась с etag.
+    async list(dir, etag) {
+      const r = await call(`${at(dir)}?ref=main`, cond(etag));
+      if (r.status === 304) return null;
       if (r.status === 404) return [];
       if (!r.ok) fail(r);
       const d = await r.json();
-      return Array.isArray(d) ? d.filter(x => x.type === "file").map(({ name, path, sha }) => ({ name, path, sha })) : [];
+      const out = Array.isArray(d) ? d.filter(x => x.type === "file").map(({ name, path, sha }) => ({ name, path, sha })) : [];
+      out.etag = r.headers.get("ETag");
+      return out;
     },
     // Байты файла (обложки) — Blob или null. Для картинки сторис: обложки FantLab без CORS на canvas не нарисовать,
     // а копия из репозитория приходит с CORS.
@@ -95,9 +102,11 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
       const d = await r.json();
       if (!d.permissions?.push) throw new AuthError("у ключа нет права записи");
     },
-    async get() {
-      const f = await files.read(path);
-      return f ? { shelf: parse(f.text), sha: f.sha } : { shelf: emptyShelf(), sha: null };
+    // etag — версия на телефоне; не изменилась — {same: true}.
+    async get(etag) {
+      const f = await files.read(path, etag);
+      if (f?.same) return f;
+      return f ? { shelf: parse(f.text), sha: f.sha, etag: f.etag } : { shelf: emptyShelf(), sha: null };
     },
     put: (text, sha, message) => files.write(path, text, sha, message),
   };
