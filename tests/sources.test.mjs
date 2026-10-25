@@ -62,3 +62,19 @@ test("пустые и сломанные ответы не роняют разб
     assert.deepEqual(s.parse({}), []);
   }
 });
+
+test("FantLab: номер издания из адреса обложки, страницы издания, издания произведения — русские и новые сверху", async () => {
+  const { FANTLAB, fantlabEdition } = await import("../site/sources.js");
+  assert.equal(fantlabEdition("https://fantlab.ru/images/editions/big/150604"), 150604);
+  assert.equal(fantlabEdition("https://fantlab.ru/images/editions/small/7?r=1"), 7);
+  assert.equal(fantlabEdition("https://cdn.litres.ru/pub/c/cover_200/1.jpg"), null);
+  assert.equal(FANTLAB.pages(fixture("fantlab-edition-zuleyha.json")), 512);
+  assert.equal(FANTLAB.pages({ pages: 0 }), null);
+  const eds = FANTLAB.editions(fixture("fantlab-work-zuleyha.json"));
+  assert.ok(eds.length > 10);
+  assert.equal(eds[0].lang, "русский");
+  const ru = eds.filter(e => e.lang === "русский");
+  assert.ok(ru.every((e, i) => i === 0 || (ru[i - 1].year ?? 0) >= (e.year ?? 0)), "русские — новые сверху");
+  assert.ok(eds.indexOf(ru.at(-1)) < eds.findIndex(e => e.lang !== "русский"), "сначала все русские");
+  assert.deepEqual(FANTLAB.editions(null), []);
+});

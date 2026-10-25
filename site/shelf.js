@@ -74,11 +74,13 @@ export function yearStats(shelf, y) {
       if (r.length >= 7) months[Number(r.slice(5, 7)) - 1]++; else noMonth++;
     }
   }
-  const rated = books.filter(b => b.rating);
+  const rated = books.filter(b => b.rating), paged = books.filter(b => b.pages > 0);
   return {
     year: y, count, months, noMonth, books: books.sort((a, b) => readIn(a, y).localeCompare(readIn(b, y))),
     avg: rated.length ? rated.reduce((s, b) => s + b.rating, 0) / rated.length : null,
     fives: books.filter(b => b.rating === 5),
+    // Страницы — сумма по книгам, где число известно (у FantLab — из издания, у Open Library — сразу, или вписано руками).
+    pages: paged.reduce((s, b) => s + b.pages, 0), pagesKnown: paged.length,
   };
 }
 
@@ -96,6 +98,8 @@ export function describe(ops, before, after) {
       return `${SHELVES[b.shelf] ?? b.shelf}: ${who(b)}${r}`;
     }
     if ("rating" in o.book) return `Оценка ${b.rating ? stars(b.rating) : "снята"}: ${who(b)}`;
+    if ("pages" in o.book) return `Страниц ${b.pages ?? "не знаем"}: ${who(b)}`;
+    if ("cover" in o.book) return `${b.cover ? "Новая обложка" : "Обложка убрана"}: ${who(b)}`;
     return `Изменена: ${who(b)}`;
   });
   const uniq = [...new Set(lines)], n = uniq.length, a = n % 10, b = n % 100;

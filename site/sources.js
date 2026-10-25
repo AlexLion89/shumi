@@ -19,6 +19,21 @@ const coverFirst = items => [...items.filter(b => b.cover), ...items.filter(b =>
 const yearOf = s => { const m = /^(\d{4})/.exec(String(s ?? "")); return m ? Number(m[1]) : null; };
 const names = s => String(s ?? "").split(/,\s*/).map(x => x.trim()).filter(Boolean);
 
+// FantLab: номер издания живёт в адресе обложки — по нему число страниц (/edition) и обложки других изданий
+// того же произведения (/work/<id>/extended). CORS у api.fantlab.ru открыт.
+export const fantlabEdition = cover => Number(/fantlab\.ru\/images\/editions\/(?:big|small)\/(\d+)/.exec(cover ?? "")?.[1]) || null;
+export const FANTLAB = {
+  edition: id => `https://api.fantlab.ru/edition/${id}`,
+  work: id => `https://api.fantlab.ru/work/${id}/extended`,
+  cover: id => `https://fantlab.ru/images/editions/big/${id}`,
+  pages: d => (Number(d?.pages) > 0 ? Number(d.pages) : null),
+  // Издания произведения: сначала на русском, внутри — новые сверху.
+  editions: d => Object.values(d?.editions_blocks ?? {}).flatMap(b => b?.list ?? [])
+    .map(e => ({ id: e.edition_id, year: e.year ?? null, lang: e.lang ?? "", pages: Number(e.pages) > 0 ? Number(e.pages) : null }))
+    .filter(e => e.id)
+    .sort((a, b) => (a.lang === "русский" ? 0 : 1) - (b.lang === "русский" ? 0 : 1) || (b.year ?? 0) - (a.year ?? 0)),
+};
+
 export const SOURCES = {
   // Недокументированный API, которым пользуется сам сайт LitRes; без CORS, поэтому только через Worker.
   litres: {

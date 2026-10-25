@@ -63,6 +63,22 @@ test("итоги года: число, месяцы, без месяца, сре
   assert.equal(yearStats(s, 2024).count, 0);
 });
 
+test("страницы за год — сумма по книгам, где число известно", () => {
+  const s = shelfOf({
+    a: book("400 стр.", { shelf: "read", reads: ["2026-01"], pages: 400 }),
+    b: book("Не знаем", { shelf: "read", reads: ["2026-02"] }),
+    c: book("320 стр.", { shelf: "read", reads: ["2026-03"], pages: 320 }),
+    d: book("Хочу, 900 стр.", { shelf: "want", pages: 900 }),
+  });
+  const st = yearStats(s, 2026);
+  assert.equal(st.pages, 720);
+  assert.equal(st.pagesKnown, 2);
+  const put = [{ op: "put", id: "b", book: { pages: 250 } }];
+  assert.equal(describe(put, s, apply(s, put)), "Страниц 250: «Не знаем» — Автор");
+  const cov = [{ op: "put", id: "b", book: { cover: "https://x/c.jpg" } }];
+  assert.equal(describe(cov, s, apply(s, cov)), "Новая обложка: «Не знаем» — Автор");
+});
+
 test("сообщение коммита читается как дневник", () => {
   const before = shelfOf({ a: book("Масло", { authors: ["Асако Юзуки"] }) });
   const add = [{ op: "put", id: "b", book: book("Зулейха открывает глаза", { authors: ["Гузель Яхина"] }) }];

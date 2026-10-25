@@ -146,8 +146,19 @@ for (const dark of [false, true]) {
       await page.type("#f-shelf", "");
 
       // Картинка «Итоги года»: 1080×1920, обложки — копии из репозитория (FantLab без CORS иначе не нарисовать).
+      // «Хочу» по автору: Перрин, Элрод, Clear — русские фамилии перед латинскими.
+      await page.goto(`${APP}#want`);
+      await page.until("document.querySelector('#v-want select.sort')");
+      await page.eval("const s = document.querySelector('#v-want select.sort'); s.value = 'author'; s.dispatchEvent(new Event('change')); 1");
+      await page.until("document.querySelector('#v-want .tile')?.getAttribute('aria-label') === 'Опасная игра бабули'");
+      check(true, "«Хочу» по автору: первой — Перрин");
+      await page.eval("localStorage.removeItem('shumi.wantSort'); 1");
+
       await page.goto(`${APP}#stats/2026`);
       await page.until("[...document.querySelectorAll('#v-stats button')].some(b => b.textContent === 'Поделиться итогами')");
+      // Страницы книг FantLab приложение спрашивает у изданий само — в итогах появляется «≈ N страниц».
+      await page.until("document.querySelector('#v-stats').textContent.includes('страниц')", 45000);
+      check(true, "страницы за год: " + await page.eval("[...document.querySelectorAll('#v-stats .avg')].map(p => p.textContent).join(' | ')"));
       await sleep(3000);   // заглушка GitHub докачивает копии обложек
       await page.click("#v-stats button", "Поделиться итогами");
       await page.until("document.querySelector('#sheet .story-preview')?.complete && document.querySelector('#sheet .story-preview').naturalWidth > 0", 30000);
@@ -174,10 +185,14 @@ page = await launch({ port: 9336 });
 try {
   await page.goto("http://localhost:8760/");
   await page.until("!document.getElementById('login').hidden");
-  await page.shot(join(out, "login.png"));
-  await page.type("#key", "чужой");
+  // Снимок экрана входа headless Edge иногда не отдаёт — это не повод валить проверку.
+  await Promise.race([page.shot(join(out, "login.png")).catch(() => {}), sleep(10000)]);
+  await page.type("#key", "  «чужой ключ»  ");
   await page.eval("document.getElementById('login-form').requestSubmit(); 1");
-  await sleep(100);
+  await page.until("document.getElementById('login-err').textContent.startsWith('Ключ не подходит')");
+  check(true, "вход: ключ с кириллицей — «" + await page.eval("document.getElementById('login-err').textContent") + "»");
+} catch (e) {
+  check(false, "экран входа: " + e.message);
 } finally { await page.close(); server.kill(); }
 
 console.log(failed ? `\nНЕ ПРОШЛО: ${failed}` : "\nвсё прошло", "· снимки:", out);

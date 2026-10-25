@@ -6,7 +6,7 @@ import { createFeedback } from "./feedback.js";
 import { AuthError, cleanKey, github } from "./github.js";
 import { merge } from "./rank.js";
 import { SHELVES, findSame, list, newId, readByYear, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
-import { SOURCES } from "./sources.js";
+import { FANTLAB, SOURCES, fantlabEdition } from "./sources.js";
 import { createStore } from "./sync.js";
 
 const params = new URLSearchParams(location.search);
@@ -75,7 +75,7 @@ function start(key) {
   $("login").hidden = true;
   $("app").hidden = false;
   render();
-  store.sync();
+  store.sync().then(addPages);
   fb.sync();   // ответы на замечания — точка у 💬
 }
 
@@ -172,11 +172,23 @@ function viewShelf(s) {
   );
 }
 
+// Порядок «Хочу»: новые сверху, по фамилии автора (последнее слово имени) или по названию; выбор помнит телефон.
+const surname = b => (b.authors?.[0] ?? "").trim().split(/\s+/).pop() ?? "";
+const WANT_SORTS = {
+  new: ["Сначала новые", (a, b) => String(b.added).localeCompare(String(a.added))],
+  author: ["По автору", (a, b) => surname(a).localeCompare(surname(b), "ru") || a.title.localeCompare(b.title, "ru")],
+  title: ["По названию", (a, b) => a.title.localeCompare(b.title, "ru")],
+};
+
 function viewWant(s) {
-  const all = list(s).filter(b => b.shelf === "want").sort((a, b) => String(b.added).localeCompare(String(a.added)));
+  const by = WANT_SORTS[localStorage.getItem("shumi.wantSort")] ? localStorage.getItem("shumi.wantSort") : "new";
+  const all = list(s).filter(b => b.shelf === "want").sort(WANT_SORTS[by][1]);
   const want = filtered($("f-want"), all), q = $("f-want").value.trim();
+  const sort = all.length > 1 ? el("select", { class: "sort", "aria-label": "Порядок", onchange: e => { localStorage.setItem("shumi.wantSort", e.target.value); render(); } },
+    Object.entries(WANT_SORTS).map(([k, [label]]) => el("option", { value: k, selected: k === by }, label))) : null;
   fill($("b-want"),
-    want.length ? [el("p", { class: "sub" }, q ? `${books(want.length)} из ${all.length}` : books(want.length)), grid(want, false)]
+    want.length ? [el("div", { class: "list-head" }, el("p", { class: "sub" }, q ? `${books(want.length)} из ${all.length}` : books(want.length)), sort),
+      grid(want, false)]
       : q ? nothingFound() : emptyState("Пока пусто", "Нашла книгу на потом — нажми «Хочу» в поиске.", "Найти книгу"),
   );
 }
@@ -271,12 +283,31 @@ $("manual").addEventListener("click", openManual);
 function add(m, shelf, extra = {}) {
   const now = nowIso();
   store.change([{ op: "put", id: newId(), book: {
-    title: m.title, authors: m.authors ?? [], year: m.year ?? null, cover: m.cover ?? null,
+    title: m.title, authors: m.authors ?? [], year: m.year ?? null, cover: m.cover ?? null, pages: m.pages ?? null,
     src: m.src ?? "manual", srcId: m.id ?? null, url: m.url ?? null,
     shelf, rating: null, reads: [], added: now, updated: now, ...extra,
   } }]);
   toast(`«${short(m.title)}» — ${TO_SHELF[shelf]}`);
+  setTimeout(addPages, 2000);
 }
+
+// Страницы книг FantLab: в поиске их нет, но номер издания есть в адресе обложки — спрашиваем издание один раз
+// (pagesTried, чтобы не спрашивать снова, если FantLab числа не знает). Не чаще раза в 1,2 с — как просит FantLab.
+let paging = false;
+async function addPages() {
+  if (paging || !store) return;
+  paging = true;
+  try {
+    const todo = list(store.view()).filter(b => !(b.pages > 0) && !b.pagesTried && fantlabEdition(b.cover)).slice(0, 10);
+    for (const b of todo) {
+      let pages = null;
+      try { const r = await fetchT(FANTLAB.edition(fantlabEdition(b.cover)), 10000); if (r.ok) pages = FANTLAB.pages(await r.json()); } catch { continue; }
+      store.change([{ op: "put", id: b.id, book: pages ? { pages } : { pagesTried: true } }]);
+      await new Promise(r => setTimeout(r, 1200));
+    }
+  } finally { paging = false; }
+}
+const pagesText = n => `≈ ${n.toLocaleString("ru-RU")} ${plural(n, "страница", "страницы", "страниц")}`;
 
 // ---------- итоги
 
@@ -300,6 +331,8 @@ function viewStats(s, arg) {
       el("span", {}, MONTHS[m])))),
     st.noMonth ? el("p", { class: "sub", style: "text-align:center" }, `и ещё ${books(st.noMonth)} — без месяца`) : null,
     st.avg ? el("p", { class: "avg" }, "Средняя оценка ", el("b", {}, st.avg.toFixed(1).replace(".", ",")), " ", el("span", { class: "star" }, "★")) : null,
+    st.pagesKnown ? el("p", { class: "avg" }, el("b", {}, pagesText(st.pages)),
+      st.pagesKnown < st.books.length ? ` · посчитано у ${st.pagesKnown} из ${st.books.length}` : "") : null,
     st.count ? el("p", { class: "share-row" }, el("button", { class: "pill main", type: "button", onclick: () => openStory(y) }, "Поделиться итогами")) : null,
     st.books.length ? el("div", { class: "mosaic" }, st.books.map(b => tile(b, false)))
       : el("p", { class: "sub", style: "text-align:center" }, "В этом году пока ничего не прочитано."),
@@ -381,11 +414,12 @@ async function storyImage(y) {
   g.fillStyle = "#8A8580";
   g.font = `400 46px ${FONT}`;
   g.fillText(plural(st.count, "книга прочитана", "книги прочитаны", "книг прочитано"), W / 2, 630);
-  if (st.avg) g.fillText(`средняя оценка ${st.avg.toFixed(1).replace(".", ",")} ★`, W / 2, 700);
+  const sub = [st.avg ? `средняя оценка ${st.avg.toFixed(1).replace(".", ",")} ★` : null, st.pagesKnown ? pagesText(st.pages) : null].filter(Boolean);
+  sub.forEach((line, i) => g.fillText(line, W / 2, 700 + i * 62));
 
   // Мозаика: столько столбцов, чтобы все обложки 2:3 влезли в рамку; последний ряд — по центру.
   const list = st.books.slice(0, 120), n = list.length;
-  const box = { x: 70, y: st.avg ? 770 : 720, w: W - 140, h: 0 };
+  const box = { x: 70, y: 720 + sub.length * 62, w: W - 140, h: 0 };
   box.h = 1800 - box.y;
   let lay;
   for (let cols = 1; cols <= 14 && !lay; cols++) {
@@ -506,6 +540,9 @@ function openBook(id) {
         el("div", { class: "field" }, el("label", {}, "Оценка"), starPicker(b.rating, rating => put({ rating }))),
         el("div", { class: "field" }, el("label", {}, "Когда прочитала"), readsEditor(b.reads ?? [], reads => put({ reads }))),
       ] : null,
+      el("div", { class: "field" }, el("label", { for: "pages-in" }, "Страниц"),
+        el("input", { id: "pages-in", class: "pages-in", type: "number", inputmode: "numeric", min: 1, max: 20000, placeholder: "не знаем", value: b.pages > 0 ? b.pages : null,
+          onchange: e => { const n = Math.round(Number(e.target.value)); put({ pages: n > 0 ? n : null }); } })),
       el("div", { class: "sheet-foot" },
         el("button", { class: "link danger", type: "button", onclick: () => remove(id) }, "Убрать с полки"),
         el("button", { class: "pill main", type: "button", onclick: closeSheet }, "Готово")));
