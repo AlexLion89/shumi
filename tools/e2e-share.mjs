@@ -37,7 +37,7 @@ try {
   const f = await share.files.read(`${id}.json`);
   await share.files.remove(`${id}.json`, f.sha, "Проверка e2e: ссылка отозвана");
   check(await waitStatus(id, 404), "после удаления Pages больше не отдаёт файл");
-  await page.goto(shareUrl("https://shumi.sirenyov.link/", id, key) + "&");   // новая загрузка страницы
+  await page.goto("about:blank");   // тот же адрес с другим «#» браузер не перезагружает — сначала пустая страница
   await page.goto(shareUrl("https://shumi.sirenyov.link/", id, key));
   await page.until("document.querySelector('#share .empty')", 30000);
   check(await page.eval("document.getElementById('share').textContent.includes('Итогов по этой ссылке нет')"), "по удалённой ссылке — «Итогов по этой ссылке нет»");
