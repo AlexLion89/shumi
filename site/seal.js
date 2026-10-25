@@ -9,7 +9,9 @@ const toB64url = bytes => {
 };
 const fromB64url = s => Uint8Array.from(atob(String(s).replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
 
-export const newShareId = () => toB64url(crypto.getRandomValues(new Uint8Array(9)));   // 12 знаков
+// Номер ссылки — имя файла на GitHub Pages: только 0–9 и a–f (16 знаков), без «_» и «-» в начале — такие файлы
+// Jekyll не публикует (в shumi-share он к тому же выключен .nojekyll).
+export const newShareId = () => [...crypto.getRandomValues(new Uint8Array(8))].map(b => b.toString(16).padStart(2, "0")).join("");
 export const newShareKey = () => toB64url(crypto.getRandomValues(new Uint8Array(16)));
 
 const aes = (key, use) => crypto.subtle.importKey("raw", fromB64url(key), "AES-GCM", false, [use]);

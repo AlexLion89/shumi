@@ -16,7 +16,7 @@ test("итоги шифруются: без ключа не прочитать, 
 
 test("ссылка: адрес, разбор, случайные id и ключ", () => {
   const id = newShareId(), key = newShareKey();
-  assert.equal(id.length, 12);
+  assert.match(id, /^[0-9a-f]{16}$/);
   assert.ok(key.length >= 21);
   const url = shareUrl("https://shumi.sirenyov.link/", id, key);
   assert.equal(url, `https://shumi.sirenyov.link/y/#${id}.${key}`);
