@@ -10,7 +10,8 @@
 - **Node 22:** `C:\out\node22\node.exe` по полному пути; системный Node 16 не трогать.
 - **Перед пушем:** `node --test tests/*.test.mjs` и `node tools/ui-check.mjs` (headless Edge, около 3 минут).
   С ключом (`~/.shumi-dev-token`, только с разрешения владельца): `tools/e2e-github.mjs` (временный файл в
-  shumi-data), `tools/live-check.mjs` (живой сайт, только чтение), `tools/update-check.mjs` (кнопка «Обновить»).
+  shumi-data), `tools/live-check.mjs` (живой сайт; запись в GitHub браузер отклоняет — без этого приложение само дописывает
+  полке страницы, так было 25.10.2026), `tools/update-check.mjs` (кнопка «Обновить»).
 - **Новое поле книги или замечания — только с умолчанием при чтении:** у неё на телефоне и в shelf.json лежат
   записи старого вида.
 - **Файлы — только LF**, коммиты — от `AlexLion89 <sirenyov@gmail.com>` (глобальная подпись git на машине — рабочая).

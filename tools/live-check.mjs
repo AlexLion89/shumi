@@ -1,6 +1,7 @@
 // Живой сайт с настоящим ключом — только чтение: открывает https://shumi.sirenyov.link в headless Edge,
 // кладёт ключ в хранилище страницы, ждёт, что полка загрузилась из GitHub, и сообщает, сколько книг.
-// Ничего не пишет: при пустой очереди приложение только читает shelf.json. Ключ никуда не выводится.
+// Ничего не пишет: браузер отклоняет всё, кроме GET, к GitHub API (readOnlyGitHub) — 25.10.2026 без этого
+// приложение само дописало её книгам число страниц. Ключ никуда не выводится.
 //
 //   SHUMI_TOKEN_FILE=~/.shumi-dev-token node tools/live-check.mjs [снимок.png]
 import { readFileSync } from "node:fs";
@@ -11,6 +12,7 @@ const token = cleanKey(process.env.SHUMI_TOKEN_FILE ? readFileSync(process.env.S
 if (!/^github_pat_\w+$/.test(token)) { console.error("нет ключа: SHUMI_TOKEN_FILE или SHUMI_TOKEN"); process.exit(2); }
 
 const page = await launch({ port: 9340 });
+const blocked = await page.readOnlyGitHub();
 let ok = false;
 try {
   await page.goto("https://shumi.sirenyov.link/");
@@ -22,8 +24,11 @@ try {
   const n = await page.eval("Object.keys(JSON.parse(localStorage.getItem('shelf.base')).shelf.books).length");
   console.log(`PASS живой сайт прочитал полку из GitHub: книг ${n}`);
   if (process.argv[2]) await page.shot(process.argv[2]);
-  ok = !page.errors.length;
-  console.log(ok ? "PASS ошибок в консоли нет" : "FAIL ошибки: " + page.errors.join(" | "));
+  // Отклонённая запись видна в консоли как сетевая ошибка — это ожидаемо, её не считаем.
+  const errs = page.errors.filter(e => !/Failed to fetch|Load failed|ERR_BLOCKED_BY_CLIENT/i.test(e));
+  ok = !errs.length;
+  console.log(ok ? "PASS ошибок в консоли нет" : "FAIL ошибки: " + errs.join(" | "));
+  console.log(`PASS записей в GitHub не было (отклонено попыток: ${blocked()})`);
 } catch (e) {
   console.log("FAIL " + e.message);
 } finally {

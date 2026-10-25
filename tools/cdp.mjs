@@ -31,10 +31,11 @@ export async function launch({ port = 9333, dark = false } = {}) {
   const ws = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((ok, fail) => { ws.onopen = ok; ws.onerror = fail; setTimeout(() => fail(new Error("браузер не открыл соединение отладки")), 10000); });
   let id = 0;
-  const waiting = new Map(), errors = [];
+  const waiting = new Map(), errors = [], handlers = new Map();
   ws.onmessage = m => {
     const d = JSON.parse(m.data);
     if (d.id && waiting.has(d.id)) { const { ok, fail } = waiting.get(d.id); waiting.delete(d.id); d.error ? fail(new Error(d.error.message)) : ok(d.result); }
+    if (d.method && handlers.has(d.method)) handlers.get(d.method)(d.params);
     if (d.method === "Runtime.exceptionThrown") errors.push(d.params.exceptionDetails.exception?.description ?? d.params.exceptionDetails.text);
     if (d.method === "Runtime.consoleAPICalled" && d.params.type === "error") errors.push(d.params.args.map(a => a.value ?? a.description).join(" "));
   };
@@ -54,6 +55,19 @@ export async function launch({ port = 9333, dark = false } = {}) {
   const page = {
     errors,
     send,
+    on: (method, fn) => handlers.set(method, fn),
+    // Только чтение у GitHub API: всё, кроме GET, браузер отклоняет сам — что бы ни делало приложение
+    // (страницы книг, синхронизация), в настоящий репозиторий ничего не запишется. Возвращает число отклонённых.
+    async readOnlyGitHub() {
+      let blocked = 0;
+      page.on("Fetch.requestPaused", p => {
+        const allow = ["GET", "HEAD", "OPTIONS"].includes(p.request.method);
+        if (!allow) blocked++;
+        send(allow ? "Fetch.continueRequest" : "Fetch.failRequest", allow ? { requestId: p.requestId } : { requestId: p.requestId, errorReason: "BlockedByClient" }).catch(() => {});
+      });
+      await send("Fetch.enable", { patterns: [{ urlPattern: "https://api.github.com/*" }] });
+      return () => blocked;
+    },
     async eval(expression) {
       const r = await send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true });
       if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text);
