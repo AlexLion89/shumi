@@ -52,6 +52,13 @@ for (const [id, b] of Object.entries(shelf.books)) {
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS" };
 createServer(async (req, res) => {
   if (req.method === "OPTIONS") { res.writeHead(204, CORS).end(); return; }
+  // Как GitHub Pages репозитория shumi-share: файлы без ключа, только чтение.
+  const pages = /^\/pages\/shumi-share\/([^?]+)/.exec(req.url);
+  if (pages) {
+    const f = gh.files.get("shumi-share/" + decodeURIComponent(pages[1]));
+    res.writeHead(f ? 200 : 404, { "Content-Type": "application/json", ...CORS }).end(f ? Buffer.from(f.bytes) : "Not Found");
+    return;
+  }
   const body = ["PUT", "DELETE"].includes(req.method) ? (await readBody(req)).toString("utf8") : undefined;
   const r = await gh.fetch("https://fake.github" + req.url, { method: req.method, headers: { Authorization: req.headers.authorization, Accept: req.headers.accept }, body });
   res.writeHead(r.status, { "Content-Type": r.headers.get("content-type") ?? "application/octet-stream", ...CORS }).end(Buffer.from(await r.arrayBuffer()));
@@ -76,7 +83,8 @@ const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 const site = new URL("../site/", import.meta.url);
 
 createServer(async (req, res) => {
-  const path = decodeURIComponent(new URL(req.url, "http://x").pathname).replace(/^\/+/, "") || "index.html";
+  let path = decodeURIComponent(new URL(req.url, "http://x").pathname).replace(/^\/+/, "") || "index.html";
+  if (path.endsWith("/")) path += "index.html";   // /y/ — страница итогов по ссылке
   if (path.includes("..")) { res.writeHead(400).end(); return; }
   try {
     const data = await readFile(new URL(path, site));

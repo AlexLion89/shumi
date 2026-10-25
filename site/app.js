@@ -3,9 +3,10 @@
 // Поиск — FantLab и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
 // почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут.
 import { createFeedback } from "./feedback.js";
-import { AuthError, cleanKey, github } from "./github.js";
+import { AuthError, Conflict, SHARE_REPO, cleanKey, github } from "./github.js";
 import { merge } from "./rank.js";
-import { SHELVES, findSame, list, newId, readByYear, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
+import { newShareId, newShareKey, seal, shareUrl } from "./seal.js";
+import { SHELVES, findSame, list, newId, readByYear, shareData, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
 import { FANTLAB, SOURCES, fantlabEdition } from "./sources.js";
 import { createStore } from "./sync.js";
 
@@ -43,7 +44,7 @@ const books = n => `${n} ${plural(n, "книга", "книги", "книг")}`;
 const short = t => (t.length > 40 ? t.slice(0, 38) + "…" : t);
 const nowIso = () => new Date().toISOString();
 
-let store = null, fb = null, ghClient = null;
+let store = null, fb = null, ghClient = null, shareClient = null;
 
 // ---------- вход
 
@@ -70,6 +71,7 @@ $("login-form").addEventListener("submit", async e => {
 
 function start(key) {
   const client = ghClient = github({ token: key, base: GH });
+  shareClient = github({ token: key, base: GH, repo: SHARE_REPO });
   store = createStore({ storage: ls, client, onChange: render });
   fb = createFeedback({ storage: ls, client, newId, onChange: renderFeedback });
   $("login").hidden = true;
@@ -359,7 +361,8 @@ function viewStats(s, arg) {
     st.avg ? el("p", { class: "avg" }, "Средняя оценка ", el("b", {}, st.avg.toFixed(1).replace(".", ",")), " ", el("span", { class: "star" }, "★")) : null,
     st.pagesKnown ? el("p", { class: "avg" }, el("b", {}, pagesText(st.pages)),
       st.pagesKnown < st.books.length ? ` · посчитано у ${st.pagesKnown} из ${st.books.length}` : "") : null,
-    st.count ? el("p", { class: "share-row" }, el("button", { class: "pill main", type: "button", onclick: () => openStory(y) }, "Поделиться итогами")) : null,
+    st.count ? el("p", { class: "share-row" }, el("button", { class: "pill main", type: "button", onclick: () => openStory(y) }, "Поделиться итогами"),
+      el("button", { class: "pill", type: "button", onclick: () => openShareLink(y) }, "Ссылка для подруг")) : null,
     st.books.length ? el("div", { class: "mosaic" }, st.books.map(b => tile(b, false)))
       : el("p", { class: "sub", style: "text-align:center" }, "В этом году пока ничего не прочитано."),
     st.fives.length ? [el("h2", {}, "Любимые · ", el("span", { class: "star" }, "★★★★★")),
@@ -502,6 +505,96 @@ async function openStory(y) {
     el("img", { class: "story-preview", src: url, alt: `Итоги ${y}` }),
     el("p", { class: "sub", style: "margin:0" }, "В Instagram — «Поделиться» → Instagram, или сохрани картинку и выложи в сторис."),
     el("div", { class: "sheet-foot" }, el("button", { class: "link danger", type: "button", onclick: closeSheet }, "Закрыть"), share)), () => url);
+}
+
+// ---------- ссылка «итоги года для подруг» (зашифрованные итоги в публичном shumi-share — см. seal.js)
+// Какие ссылки созданы — shares.json в приватном shumi-data: {"<год>": {id, key, created, updated}}; ключ живёт только
+// там и в самой ссылке. Фото обложек из приложения (repo:) приватны — в ссылку кладутся их уменьшенные копии.
+
+const SITE = "https://shumi.sirenyov.link/";
+const linkFor = e => (params.get("gh")   // в разработке страница итогов берёт файл у заглушки GitHub
+  ? `${location.origin}/y/?pages=${encodeURIComponent(GH + "/pages/shumi-share/")}#${e.id}.${e.key}`
+  : shareUrl(SITE, e.id, e.key));
+
+async function loadShares() {
+  const f = await ghClient.files.read("shares.json");
+  return { shares: f ? JSON.parse(f.text) : {}, sha: f?.sha ?? null };
+}
+async function saveShares(change, message) {
+  for (let i = 0; i < 3; i++) {
+    const { shares, sha } = await loadShares();
+    change(shares);
+    try { await ghClient.files.write("shares.json", JSON.stringify(shares, null, 2) + "\n", sha, message); return; }
+    catch (e) { if (!(e instanceof Conflict)) throw e; }
+  }
+  throw new Error("не сохранилось");
+}
+async function thumbDataUrl(blob, h = 300) {
+  const bm = await createImageBitmap(blob), k = Math.min(1, h / bm.height);
+  const cv = el("canvas", { width: Math.round(bm.width * k), height: Math.round(bm.height * k) });
+  cv.getContext("2d").drawImage(bm, 0, 0, cv.width, cv.height);
+  return cv.toDataURL("image/jpeg", 0.8);
+}
+async function publishShare(y, entry) {
+  const d = shareData(store.view(), y);
+  for (const b of d.books) {
+    if (!b.c?.startsWith("repo:")) continue;
+    try { const blob = await ghClient.files.blob(b.c.slice(5).split("?")[0]); b.c = blob ? await thumbDataUrl(blob) : null; } catch { b.c = null; }
+  }
+  for (const b of d.books) delete b.id;
+  await shareClient.files.save(`${entry.id}.json`, JSON.stringify(await seal(d, entry.key)), "Итоги по ссылке");
+}
+const shareError = e => (e instanceof AuthError || /404/.test(e.message)
+  ? "Нет доступа к репозиторию для ссылок shumi-share — его нужно добавить в ключ."
+  : "Не получилось — нет связи? Попробуй ещё раз.");
+
+function openShareLink(y) {
+  const st = { loading: true, busy: false, entry: null, fresh: false, err: "" };
+  const draw = () => sheetRender?.(true);
+  const run = async fn => { st.busy = true; st.err = ""; draw(); try { await fn(); } catch (e) { st.err = shareError(e); } st.busy = false; draw(); };
+  const create = async () => {
+    const entry = { id: newShareId(), key: newShareKey(), created: nowIso(), updated: nowIso() };
+    await publishShare(y, entry);
+    await saveShares(sh => { sh[y] = entry; }, `Ссылка на итоги ${y}`);
+    Object.assign(st, { entry, fresh: true });
+  };
+  const update = async () => {
+    await publishShare(y, st.entry);
+    st.entry.updated = nowIso();
+    await saveShares(sh => { sh[y] = st.entry; }, `Ссылка на итоги ${y}: обновлена`);
+    toast("Итоги по ссылке обновлены");
+  };
+  const revoke = async () => {
+    const f = await shareClient.files.read(`${st.entry.id}.json`);
+    if (f) await shareClient.files.remove(`${st.entry.id}.json`, f.sha, "Ссылка отозвана");
+    await saveShares(sh => { delete sh[y]; }, `Ссылка на итоги ${y}: отозвана`);
+    st.entry = null;
+    toast("Ссылка отозвана");
+  };
+  openSheet(() => {
+    const e = st.entry, url = e && linkFor(e);
+    return el("div", { class: "sheet-body" },
+      el("h2", {}, `Ссылка на итоги ${y}`),
+      el("p", { class: "sub", style: "margin:0" }, "Подруги увидят итоги года — число книг, обложки, оценки — без входа. «Хочу» и «Читаю» не видны. Ссылку можно отозвать."),
+      st.loading ? el("p", { class: "sub", style: "margin:0" }, "Проверяю…") : null,
+      !st.loading && !e ? el("div", { class: "acts" },
+        el("button", { class: "pill main", type: "button", disabled: st.busy, onclick: () => run(create) }, st.busy ? "Создаю…" : "Создать ссылку")) : null,
+      e ? [
+        el("input", { class: "text share-url", readonly: true, value: url, onfocus: ev => ev.target.select() }),
+        st.fresh ? el("p", { class: "sub", style: "margin:0" }, "Ссылка заработает примерно через минуту — GitHub публикует страницу.")
+          : el("p", { class: "sub", style: "margin:0" }, `Итоги по ссылке — на ${fbDate(e.updated)}. Прочитала ещё — нажми «Обновить итоги».`),
+        el("div", { class: "acts" },
+          navigator.share ? el("button", { class: "pill main", type: "button", onclick: () => navigator.share({ url, title: `Мои книги за ${y}` }).catch(() => {}) }, "Отправить") : null,
+          el("button", { class: "pill", type: "button", onclick: () => navigator.clipboard?.writeText(url).then(() => toast("Ссылка скопирована"), () => {}) }, "Скопировать"),
+          el("button", { class: "pill", type: "button", disabled: st.busy, onclick: () => run(update) }, "Обновить итоги"),
+          el("button", { class: "link danger", type: "button", disabled: st.busy,
+            onclick: () => { if (confirm("Отозвать ссылку? Подруги больше не смогут её открыть.")) run(revoke); } }, "Отозвать")),
+      ] : null,
+      st.err ? el("p", { class: "err" }, st.err) : null,
+      el("div", { class: "sheet-foot" }, el("span"), el("button", { class: "link danger", type: "button", onclick: closeSheet }, "Закрыть")));
+  }, () => "share-" + y);
+  loadShares().then(({ shares }) => { st.entry = shares[y] ?? null; }, e => { st.err = shareError(e); })
+    .finally(() => { st.loading = false; draw(); });
 }
 
 // ---------- шторка: карточка книги, «Прочитала», «Добавить вручную»

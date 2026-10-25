@@ -76,10 +76,12 @@ export function fakeGitHub(text = '{\n  "version": 1,\n  "books": {}\n}\n') {
     if (gh.down) throw new TypeError("Failed to fetch");
     if (opts.headers?.Authorization !== "Bearer t") return json(401, { message: "Bad credentials" });
     const { pathname } = new URL(url), method = opts.method ?? "GET";
-    if (pathname === "/repos/AlexLion89/shumi-data") return json(200, { permissions: { push: true } });
-    const prefix = "/repos/AlexLion89/shumi-data/contents/";
-    if (!pathname.startsWith(prefix)) return json(404, { message: "Not Found" });
-    const path = pathname.slice(prefix.length).split("/").map(decodeURIComponent).join("/");
+    // Репозитории: shumi-data (ключи файлов — как есть) и shumi-share (ключи — «shumi-share/<путь>»).
+    const m = /^\/repos\/AlexLion89\/(shumi-data|shumi-share)(\/contents\/(.*))?$/.exec(pathname);
+    if (!m) return json(404, { message: "Not Found" });
+    if (!m[2]) return json(200, { permissions: { push: true } });
+    const inner = m[3].split("/").map(decodeURIComponent).join("/");
+    const path = m[1] === "shumi-data" ? inner : `${m[1]}/${inner}`;
     const f = gh.files.get(path);
     if (method === "GET") {
       // ETag — как у GitHub: совпал с If-None-Match — 304 без тела (считаем их в gh.notModified).

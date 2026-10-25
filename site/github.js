@@ -6,6 +6,7 @@ import { emptyShelf, parse } from "./shelf.js";
 
 export const REPO = "AlexLion89/shumi-data";
 export const PATH = "shelf.json";
+export const SHARE_REPO = "AlexLion89/shumi-share";   // публичный, на GitHub Pages: зашифрованные итоги для ссылок
 
 export class AuthError extends Error {}   // ключ не подходит или у него нет доступа — повтор не поможет
 export class Conflict extends Error {}    // файл успели поменять с другого устройства — перечитать и наложить
@@ -17,8 +18,9 @@ const fromB64 = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s
 // Ключ, вставленный из мессенджера или заметок, бывает с пробелами, кавычками, переводом строки и BOM.
 export const cleanKey = s => String(s ?? "").replace(/[\uFEFF\s"'«»`]/g, "");
 
-// path — другой файл полки в том же репозитории: проверка tools/e2e-github.mjs пишет во временный.
-export function github({ token, base = "https://api.github.com", path = PATH, fetch: f = (...a) => fetch(...a), timeout = 15000 }) {
+// repo — другой репозиторий (ссылки на итоги — SHARE_REPO); path — другой файл полки: проверка tools/e2e-github.mjs
+// пишет во временный.
+export function github({ token, base = "https://api.github.com", repo = REPO, path = PATH, fetch: f = (...a) => fetch(...a), timeout = 15000 }) {
   async function call(url, opts = {}) {
     // Не-латиница в заголовке роняет fetch раньше GitHub, и вышло бы «нет связи» вместо «ключ не подходит».
     if (!/^[\x21-\x7e]+$/.test(token)) throw new AuthError("в ключе лишние символы");
@@ -37,7 +39,7 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
       return r;
     } finally { clearTimeout(t); }
   }
-  const at = p => `/repos/${REPO}/contents/${p.split("/").map(encodeURIComponent).join("/")}`;
+  const at = p => `/repos/${repo}/contents/${p.split("/").map(encodeURIComponent).join("/")}`;
   const fail = r => { throw new Error("GitHub ответил " + r.status); };
 
   // etag — версия, которая уже есть на телефоне: не изменилось — GitHub отвечает 304 без тела, и на мобильном
@@ -106,8 +108,8 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
     files,
     // Проверка ключа при входе: приватный репозиторий без доступа GitHub показывает как 404.
     async check() {
-      const r = await call(`/repos/${REPO}`);
-      if (r.status === 404) throw new AuthError("ключ не видит репозиторий полки");
+      const r = await call(`/repos/${repo}`);
+      if (r.status === 404) throw new AuthError(repo === REPO ? "ключ не видит репозиторий полки" : `ключ не видит ${repo}`);
       if (!r.ok) fail(r);
       const d = await r.json();
       if (!d.permissions?.push) throw new AuthError("у ключа нет права записи");

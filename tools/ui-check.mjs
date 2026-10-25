@@ -200,6 +200,39 @@ for (const dark of [false, true]) {
       writeFileSync(join(out, "story-2026.png"), Buffer.from(png, "base64"));
       await page.shot(join(out, "light-story-sheet.png"));
       await page.click("#sheet .link", "Закрыть");
+
+      // Ссылка для подруг: зашифрованные итоги в shumi-share, страница /y/ открывается без ключа, отзыв работает.
+      await page.click("#v-stats button", "Ссылка для подруг");
+      await page.until("[...document.querySelectorAll('#sheet button')].some(b => b.textContent === 'Создать ссылку')");
+      await page.click("#sheet button", "Создать ссылку");
+      await page.until("document.querySelector('#sheet .share-url')", 30000);
+      const shareLink = await page.eval("document.querySelector('#sheet .share-url').value");
+      const shares = await (await fetch("http://localhost:8788/repos/AlexLion89/shumi-data/contents/shares.json", { headers: { Authorization: "Bearer t" } })).json();
+      const entry = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(shares.content), c => c.charCodeAt(0))))["2026"];
+      const boxText = await (await fetch(`http://localhost:8788/pages/shumi-share/${entry.id}.json`)).text();
+      check(shareLink.includes(`#${entry.id}.${entry.key}`) && !boxText.includes("Тревожные") && boxText.includes('"iv"'),
+        "ссылка создана; в shumi-share — шифр без открытого текста");
+      await page.shot(join(out, "light-share-sheet.png"));
+      await page.goto(shareLink);
+      await page.until("document.querySelector('#share .big')", 30000);
+      check(await page.eval("document.querySelector('#share h1').textContent") === "Мой 2026 в книгах" && await page.eval("document.querySelector('#share .big').textContent") === "3",
+        "подруга открыла ссылку: «Мой 2026 в книгах», 3 книги");
+      check(await page.eval("[...document.querySelectorAll('#share img.cover')].some(i => i.src.startsWith('data:image/jpeg'))"), "фото обложки из приложения — внутри ссылки");
+      check(await page.eval("(t => !t.includes('[object') && !t.includes('null'))(document.getElementById('share').textContent) && document.querySelector('#share h2')?.textContent.startsWith('Любимые')"),
+        "страница итогов: «Любимые» на месте, без «[object…» и «null»");
+      await sleep(2000);
+      await page.shot(join(out, "light-share-page.png"), { full: true });
+      await page.goto(`${APP}#stats/2026`);
+      await page.until("[...document.querySelectorAll('#v-stats button')].some(b => b.textContent === 'Ссылка для подруг')");
+      await page.click("#v-stats button", "Ссылка для подруг");
+      await page.until("document.querySelector('#sheet .share-url')", 20000);
+      await page.eval("window.confirm = () => true; 1");
+      await page.click("#sheet button", "Отозвать");
+      await page.until("[...document.querySelectorAll('#sheet button')].some(b => b.textContent === 'Создать ссылку')", 20000);
+      check((await fetch(`http://localhost:8788/pages/shumi-share/${entry.id}.json`)).status === 404, "отозвана: файла в shumi-share нет");
+      await page.goto(shareLink);
+      await page.until("document.querySelector('#share .empty')", 20000);
+      check(await page.eval("document.querySelector('#share').textContent.includes('Итогов по этой ссылке нет')"), "по отозванной ссылке — «Итогов по этой ссылке нет»");
     }
     await page.goto(`${APP}#shelf`);
     await page.until("document.querySelectorAll('#v-shelf .tile').length > 3");

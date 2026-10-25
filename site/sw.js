@@ -3,7 +3,7 @@
 // навсегда. Запросы к GitHub API и каталогам не трогаем: данные ведёт sync.js, поиск всегда живой.
 const VERSION = "__VERSION__";   // при выкладке сюда подставляется коммит (.github/workflows/deploy.yml)
 const SHELL = "shell-" + VERSION, COVERS = "covers-v1";
-const FILES = ["./", "index.html", "style.css", "app.js", "feedback.js", "github.js", "rank.js", "shelf.js", "sources.js", "sync.js",
+const FILES = ["./", "index.html", "style.css", "app.js", "feedback.js", "github.js", "rank.js", "seal.js", "shelf.js", "sources.js", "sync.js",
   "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon-32.png"];
 
 // Новая версия не включается сама: ждёт, пока в приложении нажмут «Обновить» (сообщение skip-waiting).

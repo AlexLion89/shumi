@@ -84,6 +84,16 @@ export function yearStats(shelf, y) {
   };
 }
 
+// Итоги года для ссылки подругам: только то, что видно на странице итогов, — без «Хочу», «Читаю», дат добавления.
+// Обложки — адреса каталогов; фото из приложения (repo:) приложение заменяет картинкой внутри ссылки.
+export function shareData(shelf, y) {
+  const st = yearStats(shelf, y);
+  return {
+    v: 1, year: y, count: st.count, months: st.months, noMonth: st.noMonth, avg: st.avg, pages: st.pages, pagesKnown: st.pagesKnown,
+    books: st.books.map(b => ({ id: b.id, t: b.title, a: b.authors ?? [], c: b.cover ?? null, r: b.rating ?? null })),
+  };
+}
+
 export const stars = n => "★".repeat(n ?? 0) + "☆".repeat(5 - (n ?? 0));
 const who = b => `«${b.title}»${b.authors?.length ? " — " + b.authors.join(", ") : ""}`;
 
