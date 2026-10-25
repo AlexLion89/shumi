@@ -14,6 +14,8 @@ const index = existsSync("covers/index.json") ? JSON.parse(readFileSync("covers/
 let got = 0, failed = 0, removed = 0;
 
 for (const [id, b] of Object.entries(shelf.books)) {
+  // «repo:covers/<id>.jpg?v=…» — фото обложки, приложение само положило его в репозиторий: скачивать неоткуда.
+  if (b.cover?.startsWith("repo:")) { index[id] = b.cover; continue; }
   if (!b.cover || (index[id] === b.cover && existsSync(`covers/${id}.jpg`))) continue;
   try {
     const r = await fetch(b.cover, { headers: { "User-Agent": "shumi-backup (+https://shumi.sirenyov.link)" }, signal: AbortSignal.timeout(20000) });

@@ -111,3 +111,15 @@ test("полка не изменилась — GitHub отвечает 304, на
   await store.sync();
   assert.equal(store.view().books.x.title, "С планшета");
 });
+
+test("фото обложки: байты как есть, повторная запись — поверх прежней версии", async () => {
+  const gh = fakeGitHub(), c = github({ token: "t", base: gh.base, fetch: gh.fetch });
+  const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 16, 0x4a, 0x46, 0x49, 0x46, 0xff, 0xd9]);
+  const first = await c.files.save("covers/abc.jpg", jpeg, "Обложка с фото");
+  assert.deepEqual([...gh.files.get("covers/abc.jpg").bytes], [...jpeg]);
+  const again = await c.files.save("covers/abc.jpg", new Uint8Array([1, 2, 3]), "Обложка с фото");
+  assert.notEqual(again.sha, first.sha);
+  assert.deepEqual([...gh.files.get("covers/abc.jpg").bytes], [1, 2, 3]);
+  const blob = await c.files.blob("covers/abc.jpg");
+  assert.deepEqual([...new Uint8Array(await blob.arrayBuffer())], [1, 2, 3]);
+});

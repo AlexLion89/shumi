@@ -29,7 +29,8 @@ export const FANTLAB = {
   pages: d => (Number(d?.pages) > 0 ? Number(d.pages) : null),
   // Издания произведения: сначала на русском, внутри — новые сверху.
   editions: d => Object.values(d?.editions_blocks ?? {}).flatMap(b => b?.list ?? [])
-    .map(e => ({ id: e.edition_id, year: e.year ?? null, lang: e.lang ?? "", pages: Number(e.pages) > 0 ? Number(e.pages) : null }))
+    .map(e => ({ id: e.edition_id, year: e.year ?? null, lang: e.lang ?? "", pages: Number(e.pages) > 0 ? Number(e.pages) : null,
+      hasCover: Number(e.pic_num) > 0 }))   // pic_num — сколько картинок у издания; 0 — обложки нет
     .filter(e => e.id)
     .sort((a, b) => (a.lang === "русский" ? 0 : 1) - (b.lang === "русский" ? 0 : 1) || (b.year ?? 0) - (a.year ?? 0)),
 };

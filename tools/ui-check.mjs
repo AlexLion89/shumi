@@ -146,6 +146,36 @@ for (const dark of [false, true]) {
       await page.type("#f-shelf", "");
 
       // Картинка «Итоги года»: 1080×1920, обложки — копии из репозитория (FantLab без CORS иначе не нарисовать).
+      // Сменить обложку: обложка другого издания «Зулейхи» с FantLab, потом своё фото (art/raccoon.png).
+      await page.goto(`${APP}#shelf`);
+      await page.until("document.querySelector('#v-shelf .tile[aria-label^=\"Зулейха\"]')");
+      await page.click("#v-shelf .tile[aria-label^='Зулейха']");
+      await page.until("document.getElementById('sheet').open");
+      await page.click("#sheet .link", "Сменить обложку");
+      await page.until("document.querySelectorAll('#sheet .cover-picks img').length > 3", 30000);
+      await sleep(1500);
+      await page.shot(join(out, "light-cover-picker.png"));
+      const picked = await page.eval("(() => { const b = document.querySelectorAll('#sheet .cover-picks button')[1]; const u = b.querySelector('img').src; b.click(); return u; })()");
+      await page.until(saved);
+      check((await shelfFile()).books.zul.cover === picked, "обложка другого издания «Зулейхи» сохранилась");
+
+      await page.click("#v-shelf .tile[aria-label^='Зулейха']");
+      await page.until("document.getElementById('sheet').open");
+      await page.click("#sheet .link", "Сменить обложку");
+      await page.until("document.querySelector('#sheet input[type=file]')");
+      const { root } = await page.send("DOM.getDocument");
+      const { nodeId } = await page.send("DOM.querySelector", { nodeId: root.nodeId, selector: "#sheet input[type=file]" });
+      await page.send("DOM.setFileInputFiles", { nodeId, files: [fileURLToPath(new URL("../art/raccoon.png", import.meta.url))] });
+      await page.until("!document.getElementById('sheet').open", 30000);
+      await page.until(saved);
+      const zul = (await shelfFile()).books.zul;
+      const photo = await (await fetch("http://localhost:8788/repos/AlexLion89/shumi-data/contents/covers/zul.jpg", { headers: { Authorization: "Bearer t", Accept: "application/vnd.github.raw" } })).arrayBuffer();
+      check(zul.cover.startsWith("repo:covers/zul.jpg?v=") && new Uint8Array(photo)[0] === 0xff && new Uint8Array(photo)[1] === 0xd8,
+        `фото обложки: JPEG ${photo.byteLength} байт в covers/zul.jpg, у книги ${zul.cover}`);
+      await page.until("document.querySelector('#v-shelf .tile[aria-label^=\"Зулейха\"] img')?.src.startsWith('blob:')", 20000);
+      check(true, "на полке обложка — из фото");
+      await page.shot(join(out, "light-shelf-photo.png"));
+
       // «Хочу» по автору: Перрин, Элрод, Clear — русские фамилии перед латинскими.
       await page.goto(`${APP}#want`);
       await page.until("document.querySelector('#v-want select.sort')");

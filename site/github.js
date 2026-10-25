@@ -10,7 +10,8 @@ export const PATH = "shelf.json";
 export class AuthError extends Error {}   // ключ не подходит или у него нет доступа — повтор не поможет
 export class Conflict extends Error {}    // файл успели поменять с другого устройства — перечитать и наложить
 
-const toB64 = s => { let bin = ""; for (const x of new TextEncoder().encode(s)) bin += String.fromCharCode(x); return btoa(bin); };
+// Текст — в UTF-8, байты (Uint8Array — фото обложки) — как есть.
+const toB64 = s => { let bin = ""; for (const x of typeof s === "string" ? new TextEncoder().encode(s) : s) bin += String.fromCharCode(x); return btoa(bin); };
 const fromB64 = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, "")), c => c.charCodeAt(0)));
 
 // Ключ, вставленный из мессенджера или заметок, бывает с пробелами, кавычками, переводом строки и BOM.
@@ -61,6 +62,15 @@ export function github({ token, base = "https://api.github.com", path = PATH, fe
       if (r.status === 409 || r.status === 422) throw new Conflict("файл изменился");
       if (!r.ok) fail(r);
       return { sha: (await r.json()).content.sha };
+    },
+    // Записать, не зная версии: новый файл — сразу, существующий — поверх текущей версии (фото обложки).
+    async save(p, content, message) {
+      try { return await files.write(p, content, null, message); } catch (e) {
+        if (!(e instanceof Conflict)) throw e;
+        const r = await call(`${at(p)}?ref=main`);
+        if (!r.ok) fail(r);
+        return files.write(p, content, (await r.json()).sha, message);
+      }
     },
     async remove(p, sha, message) {
       const r = await call(at(p), {

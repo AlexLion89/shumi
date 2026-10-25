@@ -110,11 +110,37 @@ $("sync").addEventListener("click", () => {
   showLogin("Ключ больше не подходит. Введи новый — несохранённые правки не пропадут.");
 });
 
+// Фото обложки («repo:covers/<id>.jpg?v=…») лежит в приватном shumi-data: <img> его не откроет — байты берутся
+// через GitHub API и хранятся в кеше обложек телефона (ключ — путь с версией: новое фото — новый ключ).
+const repoCovers = new Map();
+function repoCover(ref) {
+  const path = ref.slice(5);
+  if (!repoCovers.has(path)) {
+    repoCovers.set(path, (async () => {
+      const key = "https://shumi.local/" + path, cache = await caches.open("covers-v1").catch(() => null);
+      let r = await cache?.match(key);
+      if (!r) {
+        const blob = await ghClient.files.blob(path.split("?")[0]);
+        if (!blob) throw new Error("нет файла");
+        r = new Response(blob, { headers: { "Content-Type": "image/jpeg" } });
+        await cache?.put(key, r.clone()).catch(() => {});
+      }
+      return URL.createObjectURL(await r.blob());
+    })().catch(e => { repoCovers.delete(path); throw e; }));
+  }
+  return repoCovers.get(path);
+}
+
 // Без обложки — «корешок» с названием; в маленькой обложке поиска только первая буква, иначе слова рвутся по буквам.
 function coverEl(b, cls = "cover") {
   const none = () => cls.includes("sm")
     ? el("div", { class: cls + " none initial" }, (String(b.title).replace(/^[^\p{L}\p{N}]+/u, "")[0] ?? "?").toUpperCase())
     : el("div", { class: cls + " none" }, el("span", {}, b.title), b.authors?.[0] ? el("small", {}, b.authors[0]) : null);
+  if (b.cover?.startsWith("repo:")) {
+    const img = el("img", { class: cls, alt: "" });
+    repoCover(b.cover).then(u => { img.src = u; }, () => img.replaceWith(none()));
+    return img;
+  }
   return b.cover
     ? el("img", { class: cls, src: b.cover, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: e => e.target.replaceWith(none()) })
     : none();
@@ -500,11 +526,87 @@ function closeSheet() { sheetRender = null; if ($("sheet").open) $("sheet").clos
 $("sheet").addEventListener("close", () => { sheetRender = null; });
 $("sheet").addEventListener("click", e => { if (e.target === $("sheet")) closeSheet(); });   // касание мимо шторки
 
-const head = b => el("div", { class: "card-head" }, coverEl(b, "cover big"),
+// id — книга с полки: обложку можно сменить (касание обложки или ссылка под автором).
+const head = (b, id) => el("div", { class: "card-head" },
+  id ? el("button", { class: "tile cover-btn", type: "button", "aria-label": "Сменить обложку", onclick: () => openCoverPicker(id) }, coverEl(b, "cover big"))
+    : coverEl(b, "cover big"),
   el("div", {},
     el("div", { class: "title lg" }, b.title),
     el("div", { class: "author" }, [(b.authors ?? []).join(", "), b.year].filter(Boolean).join(" · ")),
-    b.url ? el("a", { class: "src-link", href: b.url, target: "_blank", rel: "noopener" }, SOURCE_NAMES[b.src] ?? "источник") : null));
+    b.url ? el("a", { class: "src-link", href: b.url, target: "_blank", rel: "noopener" }, SOURCE_NAMES[b.src] ?? "источник") : null,
+    id ? el("div", {}, el("button", { class: "link", type: "button", onclick: () => openCoverPicker(id) }, b.cover ? "Сменить обложку" : "Добавить обложку")) : null));
+
+// Смена обложки: обложки других изданий того же произведения (FantLab), обложки из поиска по названию (для книг,
+// добавленных вручную) или своё фото — уменьшается на телефоне (пропадают и EXIF с геометкой) и ложится в
+// shumi-data как covers/<id>.jpg: попадает и в резервную копию, и на картинку «Итоги года».
+async function photoToJpeg(file, maxH = 600) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();   // <img> учитывает поворот из EXIF — фото с телефона не ляжет боком
+    const k = Math.min(1, maxH / img.naturalHeight), w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+    const cv = el("canvas", { width: w, height: h });
+    cv.getContext("2d").drawImage(img, 0, 0, w, h);
+    const blob = await new Promise((ok, fail) => cv.toBlob(b => (b ? ok(b) : fail(new Error("не сжалось"))), "image/jpeg", 0.85));
+    return new Uint8Array(await blob.arrayBuffer());
+  } finally { URL.revokeObjectURL(url); }
+}
+
+function openCoverPicker(id) {
+  const b0 = store.view().books[id];
+  if (!b0) return;
+  const cands = [], seen = new Set([b0.cover]);
+  let status = "Ищу обложки…", busy = false;
+  const addCands = urls => { for (const u of urls) if (u && !seen.has(u)) { seen.add(u); cands.push(u); } sheetRender?.(true); };
+  const put = book => store.change([{ op: "put", id, book: { ...book, updated: nowIso() } }]);
+  const done = msg => { closeSheet(); toast(msg); };
+  const file = el("input", { type: "file", accept: "image/*", hidden: true, onchange: async e => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    busy = true;
+    status = "Сохраняю фото…";
+    sheetRender?.(true);
+    try {
+      const bytes = await photoToJpeg(f);
+      const { sha } = await ghClient.files.save(`covers/${id}.jpg`, bytes, `Обложка с фото: «${short(b0.title)}»`);
+      put({ cover: `repo:covers/${id}.jpg?v=${sha.slice(0, 8)}` });
+      done("Обложка из фото сохранена");
+    } catch (err) {
+      busy = false;
+      status = err instanceof AuthError ? "Ключ не подходит — фото не сохранилось." : "Не получилось сохранить фото — нет связи? Попробуй ещё раз.";
+      sheetRender?.(true);
+    }
+  } });
+  openSheet(() => el("div", { class: "sheet-body" },
+    el("h2", {}, "Обложка"),
+    el("div", { class: "acts" },
+      el("button", { class: "pill main", type: "button", disabled: busy, onclick: () => file.click() }, "📷 Фото обложки"),
+      b0.cover ? el("button", { class: "pill", type: "button", disabled: busy, onclick: () => { put({ cover: null }); done("Обложка убрана"); } }, "Убрать обложку") : null),
+    file,
+    el("p", { class: "sub", style: "margin:0" }, status),
+    cands.length ? el("div", { class: "cover-picks" }, cands.map(u => el("button", { class: "tile", type: "button", onclick: () => { put({ cover: u }); done("Обложка обновлена"); } },
+      el("img", { class: "cover", src: u, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: e => e.target.closest("button")?.remove() })))) : null,
+    el("div", { class: "sheet-foot" }, el("span"), el("button", { class: "link danger", type: "button", onclick: closeSheet }, "Закрыть"))),
+  () => "cover-" + id);
+
+  (async () => {
+    const jobs = [];
+    if (b0.src === "fantlab" && b0.srcId) {
+      jobs.push(fetchT(FANTLAB.work(b0.srcId)).then(r => (r.ok ? r.json() : null))
+        .then(d => addCands(FANTLAB.editions(d).filter(e => e.hasCover).slice(0, 24).map(e => FANTLAB.cover(e.id)))).catch(() => {}));
+    }
+    const q = `${String(b0.title).split(/[.:(]/)[0]} ${surname(b0)}`.trim();
+    for (const s of /[а-яё]/i.test(q) ? ["fantlab"] : ["openlibrary", "fantlab"]) {
+      jobs.push(fetchT(SOURCES[s].url(q.toLowerCase())).then(r => (r.ok ? r.json() : null))
+        .then(d => addCands(merge({ [s]: SOURCES[s].parse(d) }, [s], q).filter(x => x.cover).slice(0, 12).map(x => x.cover))).catch(() => {}));
+    }
+    await Promise.all(jobs);
+    if (busy) return;
+    status = cands.length ? "Нажми на подходящую — или сфотографируй свою." : "Других обложек не нашлось — сфотографируй свою.";
+    sheetRender?.(true);
+  })();
+}
 
 const starPicker = (v, set) => el("div", { class: "stars-pick" }, [1, 2, 3, 4, 5].map(n =>
   el("button", { class: n <= (v ?? 0) ? "on" : null, type: "button", "aria-label": `${n} из 5`, onclick: () => set(v === n ? null : n) }, "★")));
@@ -532,7 +634,7 @@ function openBook(id) {
     if (!b) return null;
     const put = book => store.change([{ op: "put", id, book: { ...book, updated: nowIso() } }]);
     return el("div", { class: "sheet-body" },
-      head(b),
+      head(b, id),
       el("div", { class: "seg" }, [["reading", "Читаю"], ["read", "Прочитано"], ["want", "Хочу"]].map(([k, label]) =>
         el("button", { class: b.shelf === k ? "on" : null, type: "button",
           onclick: () => put(k === "read" && !b.reads?.length ? { shelf: k, reads: [thisMonth()] } : { shelf: k }) }, label))),

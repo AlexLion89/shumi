@@ -76,5 +76,6 @@ test("FantLab: номер издания из адреса обложки, ст�
   const ru = eds.filter(e => e.lang === "русский");
   assert.ok(ru.every((e, i) => i === 0 || (ru[i - 1].year ?? 0) >= (e.year ?? 0)), "русские — новые сверху");
   assert.ok(eds.indexOf(ru.at(-1)) < eds.findIndex(e => e.lang !== "русский"), "сначала все русские");
+  assert.ok(eds.every(e => typeof e.hasCover === "boolean") && eds.some(e => e.hasCover));
   assert.deepEqual(FANTLAB.editions(null), []);
 });
