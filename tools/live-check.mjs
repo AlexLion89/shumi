@@ -23,6 +23,13 @@ try {
   await page.until("document.getElementById('sync').hidden && JSON.parse(localStorage.getItem('shelf.base') || '{}').sha", 20000);
   const n = await page.eval("Object.keys(JSON.parse(localStorage.getItem('shelf.base')).shelf.books).length");
   console.log(`PASS живой сайт прочитал полку из GitHub: книг ${n}`);
+  // Поиск с настоящего адреса: ключ Google Книг ограничен сайтом — проверяем, что он работает именно отсюда.
+  await page.until("JSON.parse(localStorage.getItem('shumi.config') || '{}').googleKey", 20000).then(async () => {
+    await page.eval("location.hash = 'find'; 1");
+    await page.type("#q", "кафе на краю земли");
+    await page.until("[...document.querySelectorAll('#results .book')].some(r => r.textContent.includes('Стрелеки'))", 30000);
+    console.log("PASS поиск на живом сайте: " + await page.eval("document.getElementById('find-status').textContent.replace(/\\s+/g, ' ')"));
+  }, () => console.log("FAIL на живом сайте нет ключа Google Книг (config.json)"));
   if (process.argv[2]) await page.shot(process.argv[2]);
   // Отклонённая запись видна в консоли как сетевая ошибка — это ожидаемо, её не считаем.
   const errs = page.errors.filter(e => !/Failed to fetch|Load failed|ERR_BLOCKED_BY_CLIENT/i.test(e));

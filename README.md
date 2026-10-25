@@ -12,7 +12,8 @@
   резервная копия. Копия полки и очередь неотправленных правок лежат на телефоне (`site/sync.js`), поэтому
   приложение открывается и работает без сети; правки с двух устройств не затирают друг друга.
 - **Вход** — токен GitHub с доступом только к `shumi-data` (Contents: чтение и запись), вводится один раз.
-- **Поиск** — FantLab и Open Library прямо с телефона (`site/sources.js`, порядок выдачи — `site/rank.js`).
+- **Поиск** — FantLab, Google Книги и Open Library прямо с телефона (`site/sources.js`, порядок выдачи — `site/rank.js`).
+  Ключ Google Books — в `config.json` shumi-data (ограничен сайтом и Books API), телефон читает его после входа.
 - **Замечания** — `feedback/<id>.json` в shumi-data (`site/feedback.js`); ответ — `node tools/feedback.mjs`.
   Новое замечание заводит issue в shumi-data (задание `feedback.yml` там) — GitHub присылает уведомление.
 - **Копии обложек и таблица** — задание `backup.yml` в shumi-data (скрипт `tools/backup.mjs`): `covers/<id>.jpg`,
