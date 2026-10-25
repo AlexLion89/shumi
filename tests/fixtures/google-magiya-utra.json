@@ -1,0 +1,815 @@
+{
+ "kind": "books#volumes",
+ "totalItems": 192,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "5dwtEAAAQBAJ",
+   "etag": "9MZE2j20WiM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/5dwtEAAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия утра для предпринимателей",
+    "subtitle": "Как начинать свой день, чтобы поднять бизнес на новый уровень",
+    "authors": [
+     "Хэл Элрод, Кэмерон Герольд, Хонори Кордер"
+    ],
+    "publisher": "\"Манн, Иванов и Фербер\"",
+    "description": "Чтобы быть успешным предпринимателем и получать высокий доход, вам необходимо сначала стать человеком, способным всего этого добиваться. Освоив практики из этой книги, вы сумеете развить свой бизнес и поднять его на новый уровень.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785001468509"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5001468507"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 173,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "1.2.2.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=5dwtEAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=5dwtEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=5dwtEAAAQBAJ&pg=PT9&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=5dwtEAAAQBAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%B4%D0%BB%D1%8F_%D0%BF%D1%80%D0%B5%D0%B4%D0%BF%D1%80.html?hl=&id=5dwtEAAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%B4%D0%BB%D1%8F_%D0%BF%D1%80%D0%B5%D0%B4%D0%BF%D1%80-sample-epub.acsm?id=5dwtEAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%B4%D0%BB%D1%8F_%D0%BF%D1%80%D0%B5%D0%B4%D0%BF%D1%80-sample-pdf.acsm?id=5dwtEAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=5dwtEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... <b>Магии утра</b>»! Думаю, можно с уверенностью сказать, что у нас с вами есть как минимум одна общая черта (по всей вероятности, их гораздо больше, но речь идет о том, что я знаю наверняка): мы все стремимся улучшить свою жизнь и самих себя&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "ZMDPEQAAQBAJ",
+   "etag": "hQ65be2dbv0",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/ZMDPEQAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия утра. Как первый час дня определяет ваш успех",
+    "subtitle": "11-е издание, исправленное и дополненное",
+    "authors": [
+     "Хэл Элрод"
+    ],
+    "publisher": "МИФ",
+    "publishedDate": "2025-11-27",
+    "description": "Книга, которая помогла тысячам людей изменить жизнь за счет правильного начала дня и утренних ритуалов. Что, если завтра любая (или даже каждая) сфера вашей жизни могла бы чудесным образом измениться? Что было бы иначе? Вы стали бы счастливее? Здоровее? Успешнее? Вы были бы в лучшей физической форме? Стали бы богаче? Энергичнее? Что, если существует простой, но не очевидный секрет, который гарантированно поможет вам изменить любую сторону вашей жизни — и сделать это быстрее, чем вы можете себе представить? Утренние ритуалы, которые предлагает Хэл Элрод, помогли десяткам тысяч людей изменить жизнь, почувствовать себя лучше и успевать больше. Из книги вы узнаете, как первый час дня определяет ваш успех и позволяет раскрыть потенциал. Измените то, как и когда вы просыпаетесь и как проводите первый час — и вы сможете изменить свою жизнь, а именно: снизить уровень стресса; улучшить общее здоровье, сбросить лишний вес (если необходимо); просыпаться каждое утро с зарядом энергии; больше зарабатывать; найти свое призвание и следовать ему; повысить продуктивность и научиться фокусироваться на ключевых задачах. Фишки книги Более 40 страниц нового контента, включая две главы — «Магия вечера» и «Магия жизни» Для кого книга Для всех, кто хочет изменить свою жизнь, начав с малого — с первого часа каждого дня.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785002145850"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "500214585X"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 297,
+    "printType": "BOOK",
+    "categories": [
+     "Self-Help"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "1.2.2.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=ZMDPEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=ZMDPEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=ZMDPEQAAQBAJ&pg=PT2&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=ZMDPEQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=ZMDPEQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 11.99,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 11.99,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=ZMDPEQAAQBAJ&rdid=book-ZMDPEQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 11990000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 11990000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%9A%D0%B0%D0%BA_%D0%BF%D0%B5%D1%80%D0%B2%D1%8B%D0%B9-sample-epub.acsm?id=ZMDPEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%9A%D0%B0%D0%BA_%D0%BF%D0%B5%D1%80%D0%B2%D1%8B%D0%B9-sample-pdf.acsm?id=ZMDPEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=ZMDPEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... <b>Магия утра</b> для высоких продаж » « <b>Магия утра</b> для агентов по недвижимости » « <b>Магия утра</b> для финансовой свободы » « <b>Магия утра</b> для всей семьи » « <b>Магия утра</b> для предпринимателей » « <b>Магия утра</b> реальных изменений » « <b>Магия утра</b> для писателей&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "tAvBEQAAQBAJ",
+   "etag": "uvlZQOlFiCI",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/tAvBEQAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия Утра Как Запустить День с Энергией и Радостью",
+    "authors": [
+     "Фёдор Баснописец"
+    ],
+    "publisher": "ЛитРес, SelfPub",
+    "publishedDate": "2026-02-11",
+    "description": "Вы устали просыпаться разбитым и выжатым, чтобы весь день бежать по кругу? Хватит это терпеть! Книга Магия утра предлагает вам не очередную теорию, а готовую, простую и гибкую систему ритуалов, которые полностью перезагрузят ваше утро, а значит и всю вашу жизнь. Вы узнаете, как с помощью небольших, приятных действий (медитация, аффирмации, движение) настроить мозг и тело на волну продуктивности, спокойствия и радости с первых минут после пробуждения. Без насилия над собой, без пятичасовых подъёмов, с учётом вашего графика и характера. Это ваш шанс превратить самый трудный час дня в источник силы и вдохновения. Начните создавать свою реальность не с обеда, а с рассвета.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785048841891"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5048841891"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 158,
+    "printType": "BOOK",
+    "categories": [
+     "Health & Fitness"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.1.1.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=tAvBEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=tAvBEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=tAvBEQAAQBAJ&pg=PT142&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=3&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=tAvBEQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=tAvBEQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 5.01,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 3.86,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=tAvBEQAAQBAJ&rdid=book-tAvBEQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 5010000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 3860000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D0%A3%D1%82%D1%80%D0%B0_%D0%9A%D0%B0%D0%BA_%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82-sample-epub.acsm?id=tAvBEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D0%A3%D1%82%D1%80%D0%B0_%D0%9A%D0%B0%D0%BA_%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82-sample-pdf.acsm?id=tAvBEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=tAvBEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... <b>магии утра</b> делать свою работу. Они использовали принцип 1% улучшений, гибкость системы, отказывались от перфекционизма. И в итоге их утро превратилось не просто в набор действий, а в искусство – искусство создавать себя заново каждый&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "2JnGDwAAQBAJ",
+   "etag": "Uip3E2wRZdU",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/2JnGDwAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия утра для высоких продаж",
+    "subtitle": "Самый быстрый способ выйти на новый уровень",
+    "authors": [
+     "Хэл Элрод, Райан Сноу, Хонори Кордер"
+    ],
+    "publisher": "\"Манн, Иванов и Фербер\"",
+    "description": "Эта книга о продажах отличается от других изданий. Это ответ XXI века на вызов XXI века: как одновременно преуспеть во всех областях жизни, стать лидером продаж и при этом быть здоровым, сбалансированным и самореализованным человеком.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785001464235"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5001464234"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 249,
+    "printType": "BOOK",
+    "categories": [
+     "Body, Mind & Spirit"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "1.3.2.0.preview.1",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=2JnGDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=2JnGDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=2JnGDwAAQBAJ&pg=PA19&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=4&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=2JnGDwAAQBAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%B4%D0%BB%D1%8F_%D0%B2%D1%8B%D1%81%D0%BE%D0%BA%D0%B8.html?hl=&id=2JnGDwAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": true
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=2JnGDwAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... утра и отправиться на пробеж- ку. Будучи руководителем благотворительной акции Run for the Front по сбору денег для фонда Front Row Foundation, я пригла- сил Хэла рассказать о его подготовке к ... <b>Магии утра</b> » в 19 ВВЕДЕНИЕ."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "TSvqDQAAQBAJ",
+   "etag": "BGAmBIzX5Pw",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/TSvqDQAAQBAJ",
+   "volumeInfo": {
+    "title": "365 чудесных дней. Дневник по книге Элрода Хэла «Магия утра»",
+    "authors": [
+     "Инесса Терновая"
+    ],
+    "publisher": "Litres",
+    "publishedDate": "2017-01-16",
+    "description": "Креативный дневник идет в дополнение к книге Элрода Хэла «Магия утра». Прочтение книги «Магия утра» обязательно к использованию креативного дневника.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785040389889"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5040389884"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 383,
+    "printType": "BOOK",
+    "categories": [
+     "Health & Fitness"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "1.2.2.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=TSvqDQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=TSvqDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=TSvqDQAAQBAJ&pg=PP6&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=5&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=TSvqDQAAQBAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/365_%D1%87%D1%83%D0%B4%D0%B5%D1%81%D0%BD%D1%8B%D1%85_%D0%B4%D0%BD%D0%B5%D0%B9_%D0%94%D0%BD%D0%B5%D0%B2%D0%BD.html?hl=&id=TSvqDQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/365_%D1%87%D1%83%D0%B4%D0%B5%D1%81%D0%BD%D1%8B%D1%85_%D0%B4%D0%BD%D0%B5%D0%B9_%D0%94%D0%BD%D0%B5%D0%B2%D0%BD-sample-epub.acsm?id=TSvqDQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/365_%D1%87%D1%83%D0%B4%D0%B5%D1%81%D0%BD%D1%8B%D1%85_%D0%B4%D0%BD%D0%B5%D0%B9_%D0%94%D0%BD%D0%B5%D0%B2%D0%BD-sample-pdf.acsm?id=TSvqDQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=TSvqDQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... изменять свою жизнь – прямо сейчас? Шаг 2. Выполните упражнение «Колесо жизни». Используйте любую методику для его составления. Ориентировочный перечень сфер жизни по часовой стрелке начиная с 12 часов 30 дневная программа <b>Магии утра</b> ..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "aLaVEQAAQBAJ",
+   "etag": "am8nVJZ42wk",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/aLaVEQAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия утра. Хэл Элрод. Кратко",
+    "authors": [
+     "Культур-Мультур"
+    ],
+    "publisher": "ЛитРес, Культур-мультур",
+    "publishedDate": "2025-11-05",
+    "description": "Эта книга – сокращенный пересказ произведения Hal Elrod «The Miracle Morning: The Not-So-Obvious Secret».Используя лингвистические нейросети, мы значительно уменьшили объем текста, сохранив все основные идеи.Начните просыпаться, раскрывая весь свой потенциал каждый день!Получить от жизни всё, что вы хотите – это не значит делать больше. Это значит стать кем-то большим. Хэл Элрод и книга «Магия утра» помогли миллионам людей стать теми, кем они должны быть, чтобы создать жизнь своей мечты. Теперь ваша очередь.Метод Хэла – простой и эффективный пошаговый процесс, который поможет вам преобразить свою жизнь всего за шесть минут в день",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785048268230"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5048268237"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 34,
+    "printType": "BOOK",
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=aLaVEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=aLaVEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=aLaVEQAAQBAJ&printsec=frontcover&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=6&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=aLaVEQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=aLaVEQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 4.02,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 3.08,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=aLaVEQAAQBAJ&rdid=book-aLaVEQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 4020000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 3080000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%A5%D1%8D%D0%BB_%D0%AD%D0%BB%D1%80%D0%BE%D0%B4_%D0%9A-sample-epub.acsm?id=aLaVEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%A5%D1%8D%D0%BB_%D0%AD%D0%BB%D1%80%D0%BE%D0%B4_%D0%9A-sample-pdf.acsm?id=aLaVEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=aLaVEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Эта книга – сокращенный пересказ произведения Hal Elrod «The Miracle Morning: The Not-So-Obvious Secret».Используя лингвистические нейросети, мы ..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "qMKkOykEnNkC",
+   "etag": "SiYwCBSu4r4",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/qMKkOykEnNkC",
+   "volumeInfo": {
+    "title": "Ежегодный библиографический указатель книг России",
+    "publishedDate": "2021",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "VAND:30081047841170"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 662,
+    "printType": "BOOK",
+    "categories": [
+     "Russia (Federation)"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=qMKkOykEnNkC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=qMKkOykEnNkC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=qMKkOykEnNkC&pg=PA103&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=7&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=qMKkOykEnNkC&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/%D0%95%D0%B6%D0%B5%D0%B3%D0%BE%D0%B4%D0%BD%D1%8B%D0%B9_%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D0%B3%D1%80%D0%B0%D1%84.html?hl=&id=qMKkOykEnNkC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=qMKkOykEnNkC&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "-uDNEAAAQBAJ",
+   "etag": "yAlrGjLhpe0",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/-uDNEAAAQBAJ",
+   "volumeInfo": {
+    "title": "Краткое содержание «Магия утра: Как первый час дня определяет ваш успех»",
+    "authors": [
+     "Мария Рамзаева"
+    ],
+    "publisher": "ЛитРес",
+    "publishedDate": "2023-07-27",
+    "description": "Этот текст – сокращенная версия книги «Магия утра: Как первый час дня определяет ваш успех». Только самое главное: идеи, техники, ключевые цитаты.Магия утра» или «Чудесное утро» – система, созданная коучем Хэлом Элродом. За несколько лет она успела изменить жизни десятков тысяч людей по всему миру. Цель системы – создать жизнь на «десять баллов из десяти» с помощью простых, но эффективных техник. Все получится, даже если вы считаете себя закоренелой совой.История Элрода служит примером: все зависит от вас. В 20 лет автор пережил страшнейшую аварию. Врачи предупреждали, что он не сможет ходить, однако Элрод не только пошел, но и занялся бегом и вскоре пробежал марафон. Вторым ударом для Элрода стал развал бизнеса в кризис 2008 года. Именно тогда, чтобы выбраться из депрессии, автор создал систему «Чудесного утра», которая изменила его жизнь, а затем и жизни его клиентов.Напоминаем, что этот текст – краткое изложение книги.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785045651233"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5045651234"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 17,
+    "printType": "BOOK",
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "0.7.6.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=-uDNEAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=-uDNEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=-uDNEAAAQBAJ&printsec=frontcover&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=8&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=-uDNEAAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=-uDNEAAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 2.52,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 2.12,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=-uDNEAAAQBAJ&rdid=book--uDNEAAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 2520000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 2120000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9A%D1%80%D0%B0%D1%82%D0%BA%D0%BE%D0%B5_%D1%81%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%D0%B8%D0%B5_%D0%9C%D0%B0-sample-epub.acsm?id=-uDNEAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%9A%D1%80%D0%B0%D1%82%D0%BA%D0%BE%D0%B5_%D1%81%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%D0%B8%D0%B5_%D0%9C%D0%B0-sample-pdf.acsm?id=-uDNEAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=-uDNEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Этот текст – сокращенная версия книги «Магия утра: Как первый час дня определяет ваш успех». Только самое главное: идеи, техники, ..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "J8tCEAAAQBAJ",
+   "etag": "J5FUfZlXUGc",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/J8tCEAAAQBAJ",
+   "volumeInfo": {
+    "title": "Магия утра для пар",
+    "subtitle": "Как освежить чувства и вернуть любовь",
+    "authors": [
+     "Хэл Элрод, Лэнс Салазар, Брэнди Салазар, Хонори Кордер"
+    ],
+    "publisher": "\"Манн, Иванов и Фербер\"",
+    "description": "Книга может стать катализатором потрясающего преображения сотен тысяч союзов. Но даже если она просто изменит взаимоотношения в одной семье, усилия, потраченные на ее написание, были не напрасны.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785001697954"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5001697956"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": false
+    },
+    "pageCount": 0,
+    "printType": "BOOK",
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=J8tCEAAAQBAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=J8tCEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=J8tCEAAAQBAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=9&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=J8tCEAAAQBAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F_%D1%83%D1%82%D1%80%D0%B0_%D0%B4%D0%BB%D1%8F_%D0%BF%D0%B0%D1%80.html?hl=&id=J8tCEAAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=J8tCEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Книга может стать катализатором потрясающего преображения сотен тысяч союзов. Но даже если она просто изменит взаимоотношения в ..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "gOwiAAAAMAAJ",
+   "etag": "GBP+Kdixud0",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/gOwiAAAAMAAJ",
+   "volumeInfo": {
+    "title": "Традиционные формулы русской народной необрядовой лирики",
+    "subtitle": "исследование по эстетике устно-поэтического канона",
+    "authors": [
+     "Georgiĭ Ivanovich Malʹt͡sev"
+    ],
+    "publishedDate": "1989",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "UOM:39015019009383"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 176,
+    "printType": "BOOK",
+    "categories": [
+     "Folk poetry, Russian"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.9.2.0.preview.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=gOwiAAAAMAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=gOwiAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=gOwiAAAAMAAJ&q=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&cd=10&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=gOwiAAAAMAAJ&dq=%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F+%D1%83%D1%82%D1%80%D0%B0&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/%D0%A2%D1%80%D0%B0%D0%B4%D0%B8%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D1%8B%D0%B5_%D1%84%D0%BE%D1%80%D0%BC%D1%83%D0%BB%D1%8B.html?hl=&id=gOwiAAAAMAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=gOwiAAAAMAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... утра в день св . Иоанна : « Для полного счастья надо утром напиться из семи источников » . 93 Заря - не только ... <b>Магия утра</b> связана и с магическим управлением самим утром , временем : « . .в первый день Рождества белорусы&nbsp;..."
+   }
+  }
+ ]
+}

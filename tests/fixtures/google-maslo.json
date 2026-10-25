@@ -1,0 +1,823 @@
+{
+ "kind": "books#volumes",
+ "totalItems": 50,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "Q4mRDwAAQBAJ",
+   "etag": "rxZrnvEtgpw",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/Q4mRDwAAQBAJ",
+   "volumeInfo": {
+    "title": "Scratch One Flattop",
+    "subtitle": "The First Carrier Air Campaign and the Battle of the Coral Sea",
+    "authors": [
+     "Robert C. Stern"
+    ],
+    "publisher": "Indiana University Press",
+    "publishedDate": "2019-05-14",
+    "description": "A study of the historic World War II naval battle, the first involving aircraft carriers and first in which neither warship was in sight of the other. By the beginning of May 1942, five months after the Pearl Harbor attack, the US Navy was ready to challenge the Japanese moves in the South Pacific. When the Japanese sent troops to New Guinea and the Solomon Islands, the Americans sent the carriers Lexington and Yorktown to counter the move, setting the stage for the Battle of the Coral Sea . . . In this book,historian Robert C. Stern analyzes the Battle of the Coral Sea, the first major fleet engagement where the warships were never in sight of each other. Unlike the Battle of Midway, the Battle of the Coral Sea has received remarkably little study. Stern covers not only the action of the ships and their air groups but also describes the impact of this pivotal engagement. His analysis looks at the short-term impact as well as the long-term implications, including the installation of inert gas fuel-system purging on all American aircraft carriers and the push to integrate sensor systems with fighter direction to better protect against enemy aircraft. The essential text on the first carrier air campaign, Scratch One Flattop is a landmark study on an overlooked battle in the first months of the United States’ engagement in World War II. “His research into sources on both sides is exhaustive and he has used Japanese translators where necessary and appropriate to best illuminate materials. His effort has taken years of meticulous scholarship and it shows. . . . Highly recommended.” —Lisle A. Rose, The Northern Mariner / Le marin du nord",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780253039309"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0253039304"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 331,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.1.3.0.preview.1",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=Q4mRDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=Q4mRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=Q4mRDwAAQBAJ&pg=PA118&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=Q4mRDwAAQBAJ&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/Scratch_One_Flattop.html?hl=&id=Q4mRDwAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Scratch_One_Flattop-sample-pdf.acsm?id=Q4mRDwAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=Q4mRDwAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... oil slick left by Yuzuki as it came around the northern side of Savo Island . This very soon led them to Koei Maru and Toshi Maru No.3 , which were stopped , picking up survivors from the small auxiliary minesweepers . Seeing that the&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "O-KOEQAAQBAJ",
+   "etag": "sy3EDle1oDI",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/O-KOEQAAQBAJ",
+   "volumeInfo": {
+    "title": "Тень клинка",
+    "authors": [
+     "Лиса Эстерн"
+    ],
+    "publisher": "LitRes",
+    "publishedDate": "2025-10-11",
+    "description": "Она — циничная наёмница, чей народ истребили. Он — Хранитель Времени, нарушивший закон. Их дороги никогда не должны были пересечься. У неё нет веры в мир, а у него нет выбора. Он ищет героев, чтобы предотвратить катастрофу, но в мире, охваченным огнём и ложью, героем может оказаться тот, кто продал бы душу за горсть монет. Их союз обречен, их цели слишком разные. Но когда откроются Врата в Бездну, именно им предстоит решить, что окажется сильнее: надежда, что теплится в самом тёмном сердце, или отчаяние, что отравляет целый мир.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785048166703"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "5048166701"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 496,
+    "printType": "BOOK",
+    "categories": [
+     "Fiction"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.6.6.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=O-KOEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=O-KOEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=O-KOEQAAQBAJ&pg=PT148&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=O-KOEQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=O-KOEQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 2.39,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 2.01,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=O-KOEQAAQBAJ&rdid=book-O-KOEQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 2390000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 2010000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%A2%D0%B5%D0%BD%D1%8C_%D0%BA%D0%BB%D0%B8%D0%BD%D0%BA%D0%B0-sample-epub.acsm?id=O-KOEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%A2%D0%B5%D0%BD%D1%8C_%D0%BA%D0%BB%D0%B8%D0%BD%D0%BA%D0%B0-sample-pdf.acsm?id=O-KOEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=O-KOEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... <b>маслом</b> дрова продолжали гореть даже под дождем. – Умоляю, не уходи! <b>Юзуки</b> крутанула меч, прикинув расстояние до митрополита. Седовласый мужчина улыбнулся, посматривая только на лису, хотя его собратья сейчас бились внизу с другими&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "3tGuEQAAQBAJ",
+   "etag": "c8dFwN7LoUM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/3tGuEQAAQBAJ",
+   "volumeInfo": {
+    "title": "Call of the Sanuki",
+    "subtitle": "An Obsidian Accord Novel",
+    "authors": [
+     "J.A.Nixon"
+    ],
+    "publisher": "J.A.Nixon",
+    "publishedDate": "2026-04-09",
+    "description": "As the cicadas begin their summer chorus once more, the Biwa Hoshi sing songs that the Seimei twin suns have risen and a new dawn has arrived. Toya and Kagero have shown Yamato that their clan will not fade quietly into the night, yet Touma Tachibana makes a fateful decision that will change the course of the game of Go. ​Tadamitsu and his clan, the Sanuki, have called the island of Nankaido and the Seto Inland Sea home for centuries. As the flames of rebellion spark and the Awa Onmyoji fall, can Tadamitsu save his ancient home that has stood since the Kofun age, or will this be the Sanuki’s last round of Go? As change sweeps across the ancient land of Yamato, Kagero sets off on the Jinko trail where long-buried truths lie, while Toya brings to light his mother's long-held dreams.",
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 241,
+    "printType": "BOOK",
+    "categories": [
+     "Fiction"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "1.40.40.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=3tGuEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=3tGuEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=3tGuEQAAQBAJ&pg=PT19&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=3&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=3tGuEQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=3tGuEQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 4.99,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 4.99,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=3tGuEQAAQBAJ&rdid=book-3tGuEQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 4990000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 4990000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Call_of_the_Sanuki-sample-epub.acsm?id=3tGuEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Call_of_the_Sanuki-sample-pdf.acsm?id=3tGuEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=3tGuEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... Yuzuki let out a deep sigh as he ran a hand through his hair . He could feel the owl watching him from out in his ... oil lantern that had attracted a few summer moths , while in the distance , he could hear the nightjars &#39; melody&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "I-x-EQAAQBAJ",
+   "etag": "L8Xb6fu2iyg",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/I-x-EQAAQBAJ",
+   "volumeInfo": {
+    "title": "Время всегда уходит",
+    "authors": [
+     "Татьяна Бакулина"
+    ],
+    "publisher": "ЛитРес, SelfPub",
+    "publishedDate": "2025-08-18",
+    "description": "Время всегда уходит. Это как чувство беспокойства о том, что время утекает, и о возможных упущенных возможностях.Не упускайте возможности жить здесь и сейчас.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9785047928739"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "504792873X"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 18,
+    "printType": "BOOK",
+    "categories": [
+     "Fiction"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=I-x-EQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=I-x-EQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=I-x-EQAAQBAJ&pg=PP12&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=4&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=I-x-EQAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=I-x-EQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 1.51,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 1.51,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=I-x-EQAAQBAJ&rdid=book-I-x-EQAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 1510000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 1510000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%92%D1%80%D0%B5%D0%BC%D1%8F_%D0%B2%D1%81%D0%B5%D0%B3%D0%B4%D0%B0_%D1%83%D1%85%D0%BE%D0%B4%D0%B8%D1%82-sample-epub.acsm?id=I-x-EQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/%D0%92%D1%80%D0%B5%D0%BC%D1%8F_%D0%B2%D1%81%D0%B5%D0%B3%D0%B4%D0%B0_%D1%83%D1%85%D0%BE%D0%B4%D0%B8%D1%82-sample-pdf.acsm?id=I-x-EQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=I-x-EQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... <b>Юзуки</b> Асако – <b>Масло</b> и др. На одной из полок я нашла книгу под названием Прима, автор Ники Сью с отзывом популярного книжного стилиста Дарьи Немковой. Также встретилась книги серии Большие книги. Эту серию рекомендовала мне моя сестренка&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "yBEmwZ38NlcC",
+   "etag": "DpSzIUQYs3A",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/yBEmwZ38NlcC",
+   "volumeInfo": {
+    "title": "The Exporter's Directory of Japan. 1908",
+    "authors": [
+     "Japan. Imperial Commercial Museum"
+    ],
+    "publishedDate": "1909",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "COLUMBIA:CU56775970"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 420,
+    "printType": "BOOK",
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "2.5.2.0.preview.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=yBEmwZ38NlcC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=yBEmwZ38NlcC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=yBEmwZ38NlcC&q=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=5&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=yBEmwZ38NlcC&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/The_Exporter_s_Directory_of_Japan_1908.html?hl=&id=yBEmwZ38NlcC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=yBEmwZ38NlcC&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... Oil . Yuzuki Juhei , No. 69 , Minami - machi , Kanazawa . (柚木重平) Oils . PART II.— VEGETABLE WAX AND CANDLES . Akiyama Tomoshichi , No. 4 , Koami - cho Nichome , Nihonbashi - ku , Tokyo . (秋山友七) Vegetable wax , Candles , bird&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "oYE4AAAAQBAJ",
+   "etag": "dEGz5U8tJ8U",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/oYE4AAAAQBAJ",
+   "volumeInfo": {
+    "title": "The First Team",
+    "subtitle": "Pacific Naval Air Combat from Pearl Harbor to Midway",
+    "authors": [
+     "John B Lundstrom"
+    ],
+    "publisher": "Naval Institute Press",
+    "publishedDate": "2005-07-01",
+    "description": "Hailed as one of the finest examples of aviation research, this comprehensive 1984 study presents a detailed and scrupulously accurate operational history of carrier-based air warfare. From the earliest operations in the Pacific through the decisive Battle of Midway, it offers a narrative account of how ace fighter pilots like Jimmy Thach and Butch O'Hare and their skilled VF squadron mates--called the \"first team\"--amassed a remarkable combat record in the face of desperate odds. Tapping both American and Japanese sources, historian John B. Lundstrom reconstructs every significant action and places these extraordinary fighters within the context of overall carrier operations. He writes from the viewpoint of the pilots themselves, after interviewing some fifty airmen from each side, to give readers intimate details of some of the most exciting aerial engagements of the war. At the same time he assesses the role the fighter squadrons played in key actions and shows how innovations in fighter tactics and gunnery techniques were a primary reason for the reversal of American fortunes. After more than twenty years in print, the book remains the definitive account and is being published in paperback for the first time to reach an even larger audience.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9781612511665"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "161251166X"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 580,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "1.7.6.0.preview.3",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=oYE4AAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=oYE4AAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=oYE4AAAAQBAJ&pg=PA174&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=6&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=oYE4AAAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=oYE4AAAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 36.95,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 29.19,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=oYE4AAAAQBAJ&rdid=book-oYE4AAAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 36950000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 29190000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/The_First_Team-sample-epub.acsm?id=oYE4AAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/The_First_Team-sample-pdf.acsm?id=oYE4AAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=oYE4AAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... Yuzuki ( commissioned in 1927 ) offered herself as the next victim . Escaping from Tulagi , she had separated from ... oil bunkers . A thick trail of fuel oil lay in the destroyer&#39;s wake . During the first two runs , Leonard&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "eYpckisBOgsC",
+   "etag": "wu2fqiCX0NI",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/eYpckisBOgsC",
+   "volumeInfo": {
+    "title": "Rea's Far Eastern Manual ...",
+    "subtitle": "The Industrial Year Book of the Far East; Mines, Railways, Tramways, Electric Light and Power ... in China, Japan, Korea, Formosa, Hong-kong, Siam, Indo-China, Malaya, Netherlands Indies and the Philippines ...",
+    "publishedDate": "1923",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "CORNELL:31924082450861"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 1158,
+    "printType": "BOOK",
+    "categories": [
+     "East Asia"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.3.1.0.full.1",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=eYpckisBOgsC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=eYpckisBOgsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=eYpckisBOgsC&pg=PA65&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=7&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=eYpckisBOgsC&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=eYpckisBOgsC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FREE",
+    "isEbook": true,
+    "buyLink": "https://play.google.com/store/books/details?id=eYpckisBOgsC&rdid=book-eYpckisBOgsC&rdot=1&source=gbs_api"
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "ALL_PAGES",
+    "embeddable": true,
+    "publicDomain": true,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false,
+     "downloadLink": "http://books.google.com/books/download/Rea_s_Far_Eastern_Manual.epub?id=eYpckisBOgsC&hl=&output=epub&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=eYpckisBOgsC&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "FULL_PUBLIC_DOMAIN",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... Yuzuki Coal Mine at Yuzuki , Kitamatsuura Nagasaki Gun , Nagasaki Prefecture . Area : 148,447 tsubo . Production ... Oil , 4 koku . Garameki Petroleum Mine at Niitsu Machi , Naka Kanbara Gun , Niigata Prefecture . Area : 332,160 tsubo ."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "mLdi2Q848oAC",
+   "etag": "rNJqtQimpp8",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/mLdi2Q848oAC",
+   "volumeInfo": {
+    "title": "Kyomono",
+    "subtitle": "",
+    "publishedDate": "2009",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "CORNELL:31924122731361"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 136,
+    "printType": "BOOK",
+    "categories": [
+     "Decorative arts"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=mLdi2Q848oAC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=mLdi2Q848oAC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=mLdi2Q848oAC&q=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=8&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=mLdi2Q848oAC&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/Kyomono.html?hl=&id=mLdi2Q848oAC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=mLdi2Q848oAC&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... oil - absorbing tissues .日本女性のたしなみ、油とり紙 ... Oil - absorbing tissues refill 油とり紙のレフィール¥ 1,575 not including shipping /送料別 ATELIER YUZUKI KYOMISE # 03 弓月京店 NISHIJIN ORI 西陣織 The pinnacle of Nishijin weaving."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "dO--EAAAQBAJ",
+   "etag": "+o9P9EtLhXA",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/dO--EAAAQBAJ",
+   "volumeInfo": {
+    "title": "Butter",
+    "subtitle": "A Novel of Food and Murder",
+    "authors": [
+     "Asako Yuzuki"
+    ],
+    "publisher": "HarperCollins",
+    "publishedDate": "2024-04-16",
+    "description": "The cult Japanese bestseller about a female gourmet cook and serial killer, and the journalist intent on cracking her case, inspired by a true story There are two things that I simply cannot tolerate: feminists and margarine Gourmet cook Manako Kajii sits in the Tokyo Detention House convicted of the serial murders of lonely businessmen, whom she is said to have seduced with her delicious home cooking. The case has captured the nation’s imagination, but Kajii refuses to speak with the press, entertaining no visitors. That is until journalist Rika Machida writes a letter asking for her recipe for beef stew, and Kajii can’t resist writing back. Rika, the only woman in her news office, works late each night, rarely cooking more than ramen. As the visits unfold between her and the steely Kajii, they are closer to a master class in food than journalistic research. Rika hopes this gastronomic exchange will help her soften Kajii, but it seems that Rika might be the one changing. Do she and Kajii have more in common than she once thought? Inspired by the real case of a convicted con woman and serial killer—the “Konkatsu Killer”—Asako Yuzuki’s Butter is a vivid, unsettling exploration of misogyny, obsession, romance, and the transgressive pleasures of food in Japan.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780063236424"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0063236427"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": false
+    },
+    "pageCount": 512,
+    "printType": "BOOK",
+    "categories": [
+     "Fiction"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "1.5.5.0.preview.2",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=dO--EAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=dO--EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=dO--EAAAQBAJ&pg=PT20&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=9&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=dO--EAAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=dO--EAAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+     "amount": 15.99,
+     "currencyCode": "USD"
+    },
+    "retailPrice": {
+     "amount": 15.99,
+     "currencyCode": "USD"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=dO--EAAAQBAJ&rdid=book-dO--EAAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+     {
+      "finskyOfferType": 1,
+      "listPrice": {
+       "amountInMicros": 15990000,
+       "currencyCode": "USD"
+      },
+      "retailPrice": {
+       "amountInMicros": 15990000,
+       "currencyCode": "USD"
+      },
+      "giftable": true
+     }
+    ]
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Butter-sample-epub.acsm?id=dO--EAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=dO--EAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "A Novel of Food and Murder Asako Yuzuki. with a pleasing springiness and bite to it . Yet when she widened her eyes ... oil . &#39; &#39; But this is so dense and squidgy , even without it ! It&#39;s great . It looks like the butter shortage is&nbsp;..."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "-t0iAQAAMAAJ",
+   "etag": "zzRLlimjpTA",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/-t0iAQAAMAAJ",
+   "volumeInfo": {
+    "title": "Sovetskai︠a︡ etnografii︠a︡",
+    "publishedDate": "1999",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "NWU:35556030875975"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 1088,
+    "printType": "BOOK",
+    "categories": [
+     "Ethnology"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "1.12.5.0.preview.0",
+    "panelizationSummary": {
+     "containsEpubBubbles": false,
+     "containsImageBubbles": false
+    },
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=-t0iAQAAMAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=-t0iAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "ru",
+    "previewLink": "http://books.google.com/books?id=-t0iAQAAMAAJ&q=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&cd=10&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=-t0iAQAAMAAJ&dq=%D0%9C%D0%B0%D1%81%D0%BB%D0%BE+%D0%AE%D0%B7%D1%83%D0%BA%D0%B8&hl=&as_pt=BOOKS&source=gbs_api",
+    "canonicalVolumeLink": "https://books.google.com/books/about/Sovetskai%EF%B8%A0a%EF%B8%A1_etnografii%EF%B8%A0a%EF%B8%A1.html?hl=&id=-t0iAQAAMAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=-t0iAQAAMAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "... ( <b>масло</b> ) , 10 кг эт ( мясо ) , корову ( стоимостью до 300 руб . ) , дрова . В ... <b>юзук</b> ( шесть колец ) , халка ( кольцевые серьги ) . В счет « туккуз баркан ... <b>масле</b> слоеные лепешки ) . Все это отвозят , несмотря на&nbsp;..."
+   }
+  }
+ ]
+}

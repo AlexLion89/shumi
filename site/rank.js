@@ -20,8 +20,8 @@ function sameBook(a, b) {
 const stem = w => w.length >= 5 ? w.slice(0, -2) : w;
 const has = (words, w) => words.some(x => x.startsWith(stem(w)));
 
-// 100 — название совпало целиком, 90 — начинается с запроса (в том числе совпало до подзаголовка:
-// «Гарри Поттер. Фан-квиз» — не точнее, чем «Гарри Поттер и философский камень»), 85 — запрос — это автор,
+// 100 — название совпало целиком, 91 — совпало до подзаголовка («Магия утра. Как первый час дня» — сама книга,
+// выше серии «Магия утра для предпринимателей»), 90 — начинается с запроса, 85 — запрос — это автор,
 // 50–80 — все слова нашлись (выше, чем больше их в названии), до 40 — часть слов, 0 — ничего:
 // каталог нашёл книгу по аннотации.
 export function score(b, q) {
@@ -29,7 +29,8 @@ export function score(b, q) {
   if (!qw.length) return 0;
   const t = mainTitle(b.title);
   if (noArticle(norm(b.title)) === qn) return 100;
-  if (t === qn || t.startsWith(qn + " ")) return 90;
+  if (t === qn) return 91;
+  if (t.startsWith(qn + " ")) return 90;
   const tw = norm(b.title).split(" "), aw = norm(b.authors.join(" ")).split(" ");
   if (qw.every(w => has(aw, w))) return 85;
   const inTitle = qw.filter(w => has(tw, w)).length;
@@ -41,7 +42,8 @@ export function score(b, q) {
 // got — {каталог: [книги]}, order — каталоги по старшинству для этого запроса.
 // Возвращает книги без дублей, лучшие сверху; если хоть что-то совпало, совсем не совпавшее убирается.
 // К оценке: +3 за обложку, +5 если книгу нашли два каталога, +2 за FantLab — это каталог произведений,
-// а LitRes — магазин, где рядом с романом лежат путеводители и фан-квизы; −10 без автора (раскраски, сувениры).
+// а магазины (LitRes, Google Books) кладут рядом с романом путеводители и фан-квизы; −10 без автора (раскраски,
+// сувениры); −8 за книгу тоньше 80 страниц — так выглядят пересказы («Atomic Habits» на 63 страницы от другого автора).
 export function merge(got, order, q) {
   const list = [];
   order.forEach((s, si) => (got[s] ?? []).forEach((b, i) => {
@@ -55,7 +57,8 @@ export function merge(got, order, q) {
   }));
   let scored = list.map(b => {
     const base = score(b, q);
-    const bonus = (b.cover ? 3 : 0) + (b.srcs.length > 1 ? 5 : 0) + (b.srcs.includes("fantlab") ? 2 : 0) - (b.authors.length ? 0 : 10);
+    const bonus = (b.cover ? 3 : 0) + (b.srcs.length > 1 ? 5 : 0) + (b.srcs.includes("fantlab") ? 2 : 0) - (b.authors.length ? 0 : 10)
+      - (b.pages > 0 && b.pages < 80 ? 8 : 0);
     return { ...b, base, rank: base + bonus };
   });
   if (scored.some(b => b.base > 0)) scored = scored.filter(b => b.base > 0);

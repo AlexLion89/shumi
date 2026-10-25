@@ -79,3 +79,18 @@ test("FantLab: номер издания из адреса обложки, ст�
   assert.ok(eds.every(e => typeof e.hasCover === "boolean") && eds.some(e => e.hasCover));
   assert.deepEqual(FANTLAB.editions(null), []);
 });
+
+test("Google Books: без пересказов и комплектов, обложка крупнее и по https, страницы", () => {
+  const items = SOURCES.google.parse(fixture("google-magiya-utra.json"));
+  assert.ok(items.length >= 5);
+  for (const b of items) assert.doesNotMatch(b.title, /^(Саммари|Краткое)|комплект/i, b.title);
+  const b = items.find(x => x.title.startsWith("Магия утра. Как первый час"));
+  assert.deepEqual(b.authors, ["Хэл Элрод"]);
+  assert.ok(b.pages > 100);
+  assert.match(b.cover, /^https:\/\/books\.google\.com\/books\/content\?.*&fife=w400-h600$/);
+  assert.doesNotMatch(b.cover, /edge=curl/);
+  assert.match(b.url, /^https:/);
+  assert.equal(SOURCES.google.url("x", { googleKey: "K" }).endsWith("&key=K"), true);
+  assert.equal(SOURCES.google.url("x").includes("key="), false);
+  assert.deepEqual(SOURCES.google.parse({}), []);
+});

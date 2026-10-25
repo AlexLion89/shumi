@@ -1,7 +1,8 @@
 // Книжная полка Вики: экраны и действия.
 // Данные — sync.js: копия полки на телефоне + файл shelf.json в приватном GitHub-репозитории (github.js).
-// Поиск — FantLab и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
-// почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут.
+// Поиск — FantLab, Google Books и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
+// почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут. Ключ Google Books — в
+// config.json приватного shumi-data (ограничен сайтом и Books API), на телефоне — после входа.
 import { createFeedback } from "./feedback.js";
 import { AuthError, Conflict, SHARE_REPO, cleanKey, github } from "./github.js";
 import { merge } from "./rank.js";
@@ -16,7 +17,7 @@ const GH = params.get("gh") || "https://api.github.com";
 const KEY = "shumi.key";
 if (params.get("gh") && params.get("token")) localStorage.setItem(KEY, params.get("token"));
 
-const SOURCE_NAMES = { fantlab: "FantLab", openlibrary: "Open Library", litres: "LitRes", manual: "добавлена вручную" };
+const SOURCE_NAMES = { fantlab: "FantLab", google: "Google Книги", openlibrary: "Open Library", litres: "LitRes", manual: "добавлена вручную" };
 const TO_SHELF = { want: "в «Хочу прочитать»", reading: "в «Читаю»", read: "в «Прочитано»" };
 const MONTHS = "ЯФМАМИИАСОНД";
 
@@ -45,6 +46,10 @@ const short = t => (t.length > 40 ? t.slice(0, 38) + "…" : t);
 const nowIso = () => new Date().toISOString();
 
 let store = null, fb = null, ghClient = null, shareClient = null;
+let config = ls.get("shumi.config") ?? {};   // config.json из shumi-data: {googleKey}
+// Каталоги поиска: кириллица — FantLab и Google (русский нон-фикшн есть только там), латиница — ещё и Open Library.
+const catalogs = q => (/[а-яё]/i.test(q) ? ["fantlab", "google"] : ["openlibrary", "google", "fantlab"])
+  .filter(s => s !== "google" || config.googleKey);
 
 // ---------- вход
 
@@ -79,6 +84,7 @@ function start(key) {
   render();
   store.sync().then(addPages);
   fb.sync();   // ответы на замечания — точка у 💬
+  client.files.read("config.json").then(f => { if (f?.text) { config = JSON.parse(f.text); ls.set("shumi.config", config); } }).catch(() => {});
 }
 
 // ---------- экраны
@@ -235,7 +241,7 @@ function fetchT(url, ms = 12000, outer) {
 }
 
 // На мобильном важно не гонять лишнее:
-// — кириллица — только FantLab: Open Library на русские запросы отвечает мусором и медленно (~3 с даже по Wi-Fi);
+// — кириллица — FantLab и Google Книги (catalogs): Open Library на русские запросы отвечает мусором и медленно (~3 с даже по Wi-Fi);
 // — допечатала дальше — прежний поиск отменяется, а не тянет ответы, которые уже не нужны;
 // — тот же запрос в течение 10 минут — из памяти.
 const searchCache = new Map();
@@ -245,7 +251,7 @@ async function search(raw) {
   const q = raw.trim(), my = ++seq;
   searchAbort?.abort();
   if (q.length < 2) { found = { list: [], state: {}, order: [], done: false }; renderResults(); return; }
-  const order = /[а-яё]/i.test(q) ? ["fantlab"] : ["openlibrary", "fantlab"];
+  const order = catalogs(q);
   const key = q.toLowerCase(), hit = searchCache.get(key);
   const got = {}, state = {};
   const draw = () => {
@@ -263,7 +269,7 @@ async function search(raw) {
   draw();
   await Promise.all(order.map(async src => {
     try {
-      const r = await fetchT(SOURCES[src].url(key), 12000, abort.signal);
+      const r = await fetchT(SOURCES[src].url(key, config), 12000, abort.signal);
       if (!r.ok) throw new Error(String(r.status));
       got[src] = SOURCES[src].parse(await r.json()).slice(0, 15);
       state[src] = { cls: "ok", text: String(got[src].length) };
@@ -690,9 +696,9 @@ function openCoverPicker(id) {
         .then(d => addCands(FANTLAB.editions(d).filter(e => e.hasCover).slice(0, 24).map(e => FANTLAB.cover(e.id)))).catch(() => {}));
     }
     const q = `${String(b0.title).split(/[.:(]/)[0]} ${surname(b0)}`.trim();
-    for (const s of /[а-яё]/i.test(q) ? ["fantlab"] : ["openlibrary", "fantlab"]) {
-      jobs.push(fetchT(SOURCES[s].url(q.toLowerCase())).then(r => (r.ok ? r.json() : null))
-        .then(d => addCands(merge({ [s]: SOURCES[s].parse(d) }, [s], q).filter(x => x.cover).slice(0, 12).map(x => x.cover))).catch(() => {}));
+    for (const s of catalogs(q)) {
+      jobs.push(fetchT(SOURCES[s].url(q.toLowerCase(), config)).then(r => (r.ok ? r.json() : null))
+        .then(d => addCands(merge({ [s]: SOURCES[s].parse(d) }, [s], q).filter(x => x.cover && x.base > 0).slice(0, 12).map(x => x.cover))).catch(() => {}));
     }
     await Promise.all(jobs);
     if (busy) return;

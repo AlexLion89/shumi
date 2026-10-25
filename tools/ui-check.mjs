@@ -68,6 +68,17 @@ try {
   const month = new Date().toISOString().slice(0, 7);
   check(trev?.shelf === "read" && trev.rating === 4 && trev.reads?.[0] === month, `в GitHub: «Тревожные люди» прочитано, ★4, ${month}`);
 
+  // Google Книги (если ключ передан — GOOGLE_KEY_FILE): русский нон-фикшн, которого нет на FantLab.
+  if (process.env.GOOGLE_KEY_FILE) {
+    await page.eval("document.querySelector('#sheet')?.open && document.querySelector('#sheet').close(); 1");
+    await page.click("nav.tabs button", "Найти");
+    await page.type("#q", "кафе на краю земли");
+    await page.until("[...document.querySelectorAll('#results .book')].some(r => r.textContent.includes('Стрелеки'))", 30000);
+    check(await page.eval("document.getElementById('find-status').textContent.includes('Google Книги')")
+      && await page.eval("document.querySelector('#results .book .title').textContent.startsWith('Кафе на краю земли')"),
+      "Google Книги: «кафе на краю земли» — первой книга Стрелеки");
+  } else console.log("SKIP Google Книги: нет GOOGLE_KEY_FILE");
+
   await page.click("nav.tabs button", "Полка");
   await page.until("document.querySelectorAll('#v-shelf .shelves .tile').length === 1");
   check(await page.eval(`document.querySelector('#v-shelf h2').textContent.includes('${month.slice(0, 4)} · 1 книга')`), "полка: год и «1 книга»");

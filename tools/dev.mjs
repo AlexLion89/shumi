@@ -45,6 +45,13 @@ function demo() {
 
 const shelf = process.argv.includes("--empty") ? { version: 1, books: {} } : demo();
 const gh = fakeGitHub(serialize(shelf));
+// Ключ Google Books для поиска — из файла (GOOGLE_KEY_FILE), как в config.json настоящего shumi-data; не печатается.
+if (process.env.GOOGLE_KEY_FILE) {
+  const { readFileSync } = await import("node:fs");
+  const b = readFileSync(process.env.GOOGLE_KEY_FILE);
+  const googleKey = (b[0] === 0xff && b[1] === 0xfe ? b.subarray(2).toString("utf16le") : b.toString("utf8")).replace(/[\uFEFF\s"']/g, "");
+  gh.setFile("config.json", JSON.stringify({ googleKey }));
+}
 // Копии обложек, как их кладёт задание backup.yml в shumi-data (для картинки «Итоги года»), — фоном.
 for (const [id, b] of Object.entries(shelf.books)) {
   if (b.cover) fetch(b.cover).then(r => (r.ok ? r.arrayBuffer() : null)).then(a => a && gh.setFile(`covers/${id}.jpg`, new Uint8Array(a))).catch(() => {});

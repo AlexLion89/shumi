@@ -10,7 +10,14 @@ const FANTLAB_TYPES = new Set(["novel", "story", "shortstory", "novella", "colle
   "fairy-tale", "documental", "comix", "popular"]);
 
 // Пересказы чужих книг, которыми LitRes забивает выдачу: «Ключевые идеи книги…», «Саммари…», «… Кратко».
-const RETELLING = /^(ключевые идеи|саммари|краткое содержание|инфографика|конспект|обзор книги|summary|workbook)|\.\s*кратко$/i;
+const RETELLING = /^(ключевые идеи|саммари|краткое (содержание|изложение)|инфографика|конспект|обзор книги|summary|workbook)|\.\s*кратко$|\(краткое изложение\)/i;
+// Google Books ещё и наборами: «Комплект книг», «комплект из 3 психологических триллеров».
+const BUNDLE = /комплект|box set|boxed set/i;
+// Обложка Google: адрес на https, без «загнутого уголка» (edge=curl) и крупнее (fife) — исходная 128 px мелковата.
+const googleCover = links => {
+  const u = links?.thumbnail ?? links?.smallThumbnail;
+  return u ? u.replace(/^http:/, "https:").replace(/&edge=curl/, "") + "&fife=w400-h600" : null;
+};
 // То же в Open Library: пересказы, «Paperback - …» от случайных продавцов, наборы из нескольких книг.
 const JUNK_EN = /^(summary|workbook|study guide|analysis of|paperback\s*[-–])|summary (and|review)|collection set/i;
 // Сначала с обложкой: без неё в Open Library обычно дубли изданий и мусор. Порядок внутри групп — как у каталога.
@@ -63,6 +70,23 @@ export const SOURCES = {
         url: `https://fantlab.ru/work${m.work_id}`,
       };
     }),
+  },
+
+  // Google Books — русский нон-фикшн и селф-хелп, которых нет на FantLab (их же нашёл бы LitRes, но тот браузер
+  // не пускает). CORS открыт; ключ — из config.json в shumi-data, ограничен сайтом и Books API.
+  google: {
+    url: (q, { googleKey } = {}) => `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=15&printType=books`
+      + (googleKey ? `&key=${encodeURIComponent(googleKey)}` : ""),
+    parse: d => (d?.items ?? []).map(i => ({ id: i.id, v: i.volumeInfo ?? {} }))
+      .filter(({ id, v }) => id && v.title && !RETELLING.test(v.title) && !BUNDLE.test(`${v.title} ${v.subtitle ?? ""}`))
+      .map(({ id, v }) => ({
+        src: "google", id, title: v.title,
+        authors: v.authors ?? [],
+        year: yearOf(v.publishedDate),
+        cover: googleCover(v.imageLinks),
+        pages: v.pageCount > 0 ? v.pageCount : null,
+        url: v.infoLink ? v.infoLink.replace(/^http:/, "https:") : null,
+      })),
   },
 
   openlibrary: {

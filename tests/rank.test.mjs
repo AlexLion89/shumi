@@ -6,10 +6,10 @@ import { merge, score } from "../site/rank.js";
 import { fixture } from "./helpers.mjs";
 
 const parsed = (src, name) => SOURCES[src].parse(fixture(`${src}-${name}.json`));
-const RU = ["litres", "fantlab", "openlibrary"], EN = ["openlibrary", "litres", "fantlab"];
+const RU = ["litres", "fantlab", "google", "openlibrary"], EN = ["openlibrary", "google", "litres", "fantlab"];
 
 test("«тревожные люди»: роман Бакмана из FantLab первым, мусор LitRes и Open Library убран", () => {
-  const got = Object.fromEntries(RU.map(s => [s, parsed(s, "trevozhnye-lyudi")]));
+  const got = Object.fromEntries(["litres", "fantlab", "openlibrary"].map(s => [s, parsed(s, "trevozhnye-lyudi")]));
   const list = merge(got, RU, "Тревожные люди");
   assert.equal(list[0].title, "Тревожные люди");
   assert.deepEqual(list[0].authors, ["Фредрик Бакман"]);
@@ -51,7 +51,7 @@ test("многоточие не обрезает название: «Зулей�
   const list = merge({ fantlab: [far, eyes] }, RU, "Зулейха");
   assert.equal(list[0].title, "Зулейха открывает глаза");
   assert.equal(score(far, "Зулейха"), 90, "начало названия, а не точное совпадение");
-  assert.equal(score({ title: "Магия утра. Как первый час дня", authors: [] }, "магия утра"), 90, "одиночная точка по-прежнему отделяет подзаголовок");
+  assert.equal(score({ title: "Магия утра. Как первый час дня", authors: [] }, "магия утра"), 91, "одиночная точка по-прежнему отделяет подзаголовок");
 });
 
 test("оценка: точное название > начало > все слова > часть слов > ничего", () => {
@@ -83,4 +83,11 @@ test("«гарри поттер»: сверху романы, а не цикл �
   assert.ok(!list.some(b => b.title === "Гарри Поттер" && b.srcs.includes("fantlab")), "цикла FantLab нет");
   const top = list.slice(0, 3);
   for (const b of top) assert.match(b.title, /^Гарри Поттер и /, b.title);
+});
+
+test("Google: «магия утра» — сама книга выше серии; «atomic habits» — Джеймс Клир выше пересказа на 63 страницы", () => {
+  const magic = merge({ google: parsed("google", "magiya-utra") }, RU, "магия утра");
+  assert.match(magic[0].title, /^Магия утра\. Как первый час/);
+  const habits = merge({ google: parsed("google", "atomic-habits"), openlibrary: parsed("openlibrary", "atomic-habits") }, EN, "atomic habits");
+  assert.equal(habits[0].authors[0], "James Clear");
 });
