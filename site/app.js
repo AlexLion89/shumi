@@ -310,8 +310,20 @@ function renderResults() {
 }
 
 let timer;
-$("q").addEventListener("input", e => { clearTimeout(timer); timer = setTimeout(() => search(e.target.value), 700); });
+// Стёрла всё — выдача пропадает сразу, а не через 0,7 с.
+$("q").addEventListener("input", e => { clearTimeout(timer); timer = setTimeout(() => search(e.target.value), e.target.value.trim() ? 700 : 0); });
 $("find-form").addEventListener("submit", e => { e.preventDefault(); clearTimeout(timer); $("q").blur(); search($("q").value); });
+
+// Крестик в строках поиска: виден, пока в строке что-то есть; нажатие — как будто стёрла сама, клавиатура остаётся.
+for (const box of document.querySelectorAll(".search-box")) {
+  const input = box.querySelector("input"), clear = box.querySelector(".clear");
+  input.addEventListener("input", () => { clear.hidden = !input.value; });
+  clear.addEventListener("click", () => {
+    input.value = "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+  });
+}
 $("manual").addEventListener("click", openManual);
 
 function add(m, shelf, extra = {}) {

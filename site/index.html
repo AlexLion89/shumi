@@ -42,18 +42,19 @@
     <!-- Заголовок и «найти на полке» — постоянные: перерисовывается только содержимое, иначе строка теряла бы фокус. -->
     <section id="v-shelf" class="view">
       <h1>Полка</h1>
-      <input id="f-shelf" class="filter" type="search" placeholder="Найти на полке" autocomplete="off" autocapitalize="off" hidden>
+      <div class="search-box"><input id="f-shelf" class="filter" type="search" placeholder="Найти на полке" autocomplete="off" autocapitalize="off" hidden><button class="clear" type="button" aria-label="Очистить" hidden>✕</button></div>
       <div id="b-shelf"></div>
     </section>
     <section id="v-want" class="view" hidden>
       <h1>Хочу прочитать</h1>
-      <input id="f-want" class="filter" type="search" placeholder="Найти среди «Хочу»" autocomplete="off" autocapitalize="off" hidden>
+      <div class="search-box"><input id="f-want" class="filter" type="search" placeholder="Найти среди «Хочу»" autocomplete="off" autocapitalize="off" hidden><button class="clear" type="button" aria-label="Очистить" hidden>✕</button></div>
       <div id="b-want"></div>
     </section>
     <section id="v-find" class="view" hidden>
       <h1>Найти книгу</h1>
-      <form id="find-form" role="search">
+      <form id="find-form" class="search-box" role="search">
         <input id="q" type="search" placeholder="Название или автор" autocomplete="off" autocapitalize="off" enterkeyhint="search">
+        <button class="clear" type="button" aria-label="Очистить" hidden>✕</button>
       </form>
       <div id="find-status" class="sources" aria-live="polite"></div>
       <ul id="results" class="results"></ul>

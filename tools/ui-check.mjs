@@ -68,6 +68,15 @@ try {
   const month = new Date().toISOString().slice(0, 7);
   check(trev?.shelf === "read" && trev.rating === 4 && trev.reads?.[0] === month, `в GitHub: «Тревожные люди» прочитано, ★4, ${month}`);
 
+  // Крестик в строке поиска: стирает запрос и выдачу сразу, клавиатура остаётся.
+  await page.eval("document.querySelector('#sheet')?.open && document.querySelector('#sheet').close(); 1");
+  await page.click("nav.tabs button", "Найти");
+  check(await page.eval("!document.querySelector('#find-form .clear').hidden"), "в строке с запросом есть крестик");
+  await page.click("#find-form .clear");
+  await page.until("!document.querySelectorAll('#results .book').length");
+  check(await page.eval("document.getElementById('q').value === '' && document.querySelector('#find-form .clear').hidden"
+    + " && document.activeElement.id === 'q'"), "крестик стёр запрос и выдачу, строка в фокусе");
+
   // Google Книги (если ключ передан — GOOGLE_KEY_FILE): русский нон-фикшн, которого нет на FantLab.
   if (process.env.GOOGLE_KEY_FILE) {
     await page.eval("document.querySelector('#sheet')?.open && document.querySelector('#sheet').close(); 1");
@@ -154,7 +163,9 @@ for (const dark of [false, true]) {
       await page.type("#f-shelf", "зулейха");
       await page.until("document.querySelectorAll('#v-shelf .shelves .tile').length === 1");
       check(await page.eval("document.querySelector('#v-shelf .tile').getAttribute('aria-label').startsWith('Зулейха')"), "«зулейха» — на полке одна «Зулейха открывает глаза»");
-      await page.type("#f-shelf", "");
+      await page.click("#v-shelf .clear");
+      await page.until("document.querySelectorAll('#v-shelf .shelves .tile').length > 1");
+      check(await page.eval("document.getElementById('f-shelf').value === ''"), "крестик в «найти на полке» вернул всю полку");
 
       // Картинка «Итоги года»: 1080×1920, обложки — копии из репозитория (FantLab без CORS иначе не нарисовать).
       // Сменить обложку: обложка другого издания «Зулейхи» с FantLab, потом своё фото (art/raccoon.png).
