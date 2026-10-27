@@ -92,10 +92,10 @@ try {
   await page.eval("document.querySelector('#sheet')?.open && document.querySelector('#sheet').close(); 1");
   await page.click("nav.tabs button", "Найти");
   await page.type("#q", "пятизвездочный миллиардер");
-  await page.until("/LitRes (\d|не)/.test(document.getElementById('find-status').textContent)", 30000);
+  await page.until("/LitRes (\\d|не)/.test(document.getElementById('find-status').textContent)", 30000);
   await page.until("[...document.querySelectorAll('#results .book')].some(r => r.textContent.includes('Таш Оу'))", 15000).catch(() => {});
   check(await page.eval(`(() => { const r = document.querySelector('#results .book');
-    return !!r && r.textContent.includes('Пятизвездочный миллиардер') && r.textContent.includes('Таш Оу') && /cdn\.litres\.ru/.test(r.querySelector('img')?.src ?? ''); })()`),
+    return !!r && r.textContent.includes('Пятизвездочный миллиардер') && r.textContent.includes('Таш Оу') && /cdn\\.litres\\.ru/.test(r.querySelector('img')?.src ?? ''); })()`),
     "LitRes: «пятизвездочный миллиардер» — первой, автор по-русски, с обложкой · " + await page.eval("document.getElementById('find-status').textContent"));
   await page.type("#q", "长夜难明");
   const doubanImg = "[...document.querySelectorAll('#results .book')].find(r => r.textContent.includes('紫金陈') && r.querySelector('img'))?.querySelector('img')";
@@ -223,11 +223,14 @@ for (const dark of [false, true]) {
       await page.eval("localStorage.removeItem('shumi.wantSort'); 1");
 
       // Аудиокнига в карточке «Хочу»: точная ссылка на LitRes (через посредника) и поиск в Яндекс Книгах.
-      await page.click("#v-want .tile[aria-label^='Магия утра']");
+      // «Опасная игра бабули» у LitRes — «… Руководство по раскрытию собственного убийства»: та же книга до точки.
+      // (У самой «Магии утра» аудиокниги нет — только книги серии и пересказы, их ссылкой давать нельзя.)
+      await page.click("#v-want .tile[aria-label^='Опасная игра бабули']");
       await page.until("document.querySelector('#sheet .audio')");
       await page.until("!document.querySelector('#sheet .audio').textContent.includes('Ищу')", 30000);
       const audio = await page.eval("document.querySelector('#sheet .audio').textContent + ' ' + [...document.querySelectorAll('#sheet .audio a')].map(a => a.href).join(' ')");
-      check(/Аудиокнига на LitRes.*litres\.ru\/audiobook\//.test(audio) && audio.includes("books.yandex.ru/search?text="), "аудиокнига «Магии утра»: " + audio);
+      check(/Аудиокнига на LitRes.*litres\.ru\/audiobook\/kristen-perrin\//.test(audio) && audio.includes("books.yandex.ru/search?text="),
+        "аудиокнига «Опасной игры бабули»: " + audio.slice(0, 160));
       await page.shot(join(out, "light-audio.png"));
       await page.click("#sheet .pill.main", "Готово");
 

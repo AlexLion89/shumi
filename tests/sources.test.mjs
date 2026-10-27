@@ -114,6 +114,8 @@ test("Аудиокниги LitRes: ссылка на саму аудиокниг
   assert.deepEqual(b.authors, ["Кейт Куинн"]);
   assert.deepEqual(b.readers, ["Мария Орлова"]);
   assert.match(b.url, /^https:\/\/www\.litres\.ru\/audiobook\//);
+  const retold = { payload: { data: [{ instance: { id: 1, title: "КРАТКО: Опасная игра бабули. Руководство по раскрытию собственного убийства" } }] } };
+  assert.deepEqual(LITRES_AUDIO.parse(retold), [], "пересказ «КРАТКО: …» отброшен");
 });
 
 test("Douban: только книги (страница автора — нет), средняя обложка через посредника", () => {
