@@ -1,0 +1,19 @@
+[
+ {
+  "en_name": "",
+  "title": "紫金陈",
+  "url": "https://book.douban.com/author/425115/",
+  "pic": "https://img9.doubanio.com/view/personage/m/public/a1c994506bb2904dc709e7c55444d504.jpg",
+  "type": "a",
+  "id": "425115"
+ },
+ {
+  "title": "长夜难明",
+  "url": "https://book.douban.com/subject/26923390/",
+  "pic": "https://img9.doubanio.com/view/subject/s/public/s29179365.jpg",
+  "author_name": "紫金陈",
+  "year": "2017",
+  "type": "b",
+  "id": "26923390"
+ }
+]

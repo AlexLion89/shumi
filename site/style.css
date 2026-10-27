@@ -137,6 +137,11 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / .35); }
 .sheet-body h2 { margin: 0; }
 .card-head { display: flex; gap: 16px; align-items: flex-start; }
 .card-head .src-link { display: inline-block; margin-top: 6px; color: var(--accent); font-size: 14px; text-decoration: none; }
+.audio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; font-size: 15px; }
+.audio .ext { color: var(--accent); text-decoration: none; }
+.audio .ext.main { font-weight: 600; }
+.audio .ext small { color: var(--muted); font-weight: 400; }
+.audio .sub-inline { color: var(--muted); }
 .seg { display: flex; background: var(--bg); border-radius: 12px; padding: 3px; }
 .seg button { flex: 1; border: 0; background: none; padding: 9px 4px; border-radius: 9px; font-size: 14px; }
 .seg button.on { background: var(--card); box-shadow: var(--shadow); font-weight: 600; }

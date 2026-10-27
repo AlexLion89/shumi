@@ -1,7 +1,7 @@
 // Разбор настоящих ответов каталогов (tests/fixtures, сохранены 24.10.2026).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { SOURCES } from "../site/sources.js";
+import { LITRES_AUDIO, PROXY, SOURCES, viaProxy } from "../site/sources.js";
 import { fixture } from "./helpers.mjs";
 
 test("LitRes: название, автор без переводчиков, маленькая обложка, ссылка", () => {
@@ -93,4 +93,40 @@ test("Google Books: без пересказов и комплектов, обл�
   assert.equal(SOURCES.google.url("x", { googleKey: "K" }).endsWith("&key=K"), true);
   assert.equal(SOURCES.google.url("x").includes("key="), false);
   assert.deepEqual(SOURCES.google.parse({}), []);
+});
+
+// Сохранены 27.10.2026: книги, которых не нашлось в FantLab и Google (замечание Вики 26.10), аудиокнига и Douban.
+test("LitRes через посредника: «Пятизвездочный миллиардер» — с обложкой и автором по-русски", () => {
+  assert.equal(SOURCES.litres.proxy, true);
+  assert.ok(viaProxy(SOURCES.litres.url("пятизвездочный миллиардер"))
+    .startsWith(`${PROXY}?u=${encodeURIComponent("https://api.litres.ru/foundation/api/search?q=%D0%BF")}`));
+  const [b] = SOURCES.litres.parse(fixture("litres-pyatizvezdochnyy.json"));
+  assert.equal(b.title, "Пятизвездочный миллиардер");
+  assert.deepEqual(b.authors, ["Таш Оу"]);
+  assert.match(b.cover, /^https:\/\/cdn\.litres\.ru\/pub\/c\/cover_200\/\d+\.jpg$/);
+  assert.equal(b.readers, undefined, "чтецы — только у аудиокниг");
+});
+
+test("Аудиокниги LitRes: ссылка на саму аудиокнигу и чтец, без переводчика в авторах", () => {
+  assert.match(LITRES_AUDIO.url("код розы"), /&types=audiobook&/);
+  const [b] = LITRES_AUDIO.parse(fixture("litres-audio-kod-rozy.json"));
+  assert.equal(b.title, "Код Розы");
+  assert.deepEqual(b.authors, ["Кейт Куинн"]);
+  assert.deepEqual(b.readers, ["Мария Орлова"]);
+  assert.match(b.url, /^https:\/\/www\.litres\.ru\/audiobook\//);
+});
+
+test("Douban: только книги (страница автора — нет), средняя обложка через посредника", () => {
+  assert.equal(SOURCES.douban.proxy, true);
+  const items = SOURCES.douban.parse(fixture("douban-zijinchen.json"));
+  assert.equal(fixture("douban-zijinchen.json")[0].type, "a", "в образце первым — автор");
+  assert.equal(items.length, 1);
+  const b = items[0];
+  assert.equal(b.title, "长夜难明");
+  assert.deepEqual(b.authors, ["紫金陈"]);
+  assert.equal(b.year, 2017);
+  assert.equal(b.cover, viaProxy("https://img9.doubanio.com/view/subject/m/public/s29179365.jpg"));
+  assert.equal(b.url, "https://book.douban.com/subject/26923390/");
+  assert.deepEqual(SOURCES.douban.parse([{ type: "b", id: "1", title: "x", author_name: "[日] 东野圭吾 / 李盈春" }])[0].authors, ["东野圭吾", "李盈春"]);
+  assert.deepEqual(SOURCES.douban.parse({ msg: "error" }), []);
 });

@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { SOURCES } from "../site/sources.js";
-import { merge, score } from "../site/rank.js";
+import { mainTitle, merge, sameBook, score } from "../site/rank.js";
 import { fixture } from "./helpers.mjs";
 
 const parsed = (src, name) => SOURCES[src].parse(fixture(`${src}-${name}.json`));
@@ -90,4 +90,25 @@ test("Google: «магия утра» — сама книга выше сери�
   assert.match(magic[0].title, /^Магия утра\. Как первый час/);
   const habits = merge({ google: parsed("google", "atomic-habits"), openlibrary: parsed("openlibrary", "atomic-habits") }, EN, "atomic habits");
   assert.equal(habits[0].authors[0], "James Clear");
+});
+
+// Замечания Вики 26.10.2026: часть названия и автор вперемешку; китайские книги.
+test("«остров стругацкие»: «Обитаемый остров» первым, два издания LitRes склеены в одно", () => {
+  const list = merge({ litres: parsed("litres", "ostrov-strugackie") }, ["fantlab", "litres", "google"], "остров стругацкие");
+  assert.equal(list[0].title, "Обитаемый остров");
+  assert.deepEqual(list[0].authors, ["Аркадий и Борис Стругацкие"]);
+  assert.equal(list.filter(b => b.title === "Обитаемый остров" && b.authors[0] === "Аркадий и Борис Стругацкие").length, 1);
+});
+
+test("иероглифы: слово ищется в любом месте названия, автор — целиком, издания склеиваются", () => {
+  const b = { title: "长夜难明", authors: ["紫金陈"] };
+  assert.equal(score(b, "长夜难明"), 100);
+  assert.ok(score(b, "难明") >= 50, "середина названия");
+  assert.equal(score(b, "紫金陈"), 85, "запрос — автор");
+  assert.equal(mainTitle("坏小孩（修订新版）"), "坏小孩");
+  assert.ok(sameBook({ title: "坏小孩（修订新版）", authors: ["紫金陈"] }, { title: "坏小孩", authors: ["紫金陈"] }));
+  assert.ok(!sameBook({ title: "活着", authors: ["余华"] }, { title: "活着", authors: ["张三"] }), "двухиероглифное имя тоже различает авторов");
+  const list = merge({ douban: SOURCES.douban.parse(fixture("douban-huaixiaohai.json")) }, ["douban", "google"], "坏小孩");
+  assert.equal(list.length, 1);
+  assert.equal(list[0].title, "坏小孩");
 });

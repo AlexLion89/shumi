@@ -1,0 +1,260 @@
+{
+ "status": 200,
+ "error": null,
+ "payload": {
+  "data": [
+   {
+    "type": "text_book",
+    "instance": {
+     "id": 71133445,
+     "uuid": "16fd58c0-7a4e-11ef-8ce3-0cc47af30fe4",
+     "cover_url": "/pub/c/cover/71133445.jpg",
+     "url": "/book/tash-ou/pyatizvezdochnyy-milliarder-71133445/",
+     "title": "Пятизвездочный миллиардер",
+     "cover_ratio": 0.66,
+     "is_draft": false,
+     "art_type": 0,
+     "prices": {
+      "final_price": 399,
+      "inapp_price": null,
+      "inapp_base_price": null,
+      "full_price": 399,
+      "discount_price": null,
+      "litcoin_count": 0,
+      "inapp_name": null,
+      "inapp_base_name": null,
+      "currency": "RUB",
+      "discount_percent": null,
+      "cost_with_bonus": 399,
+      "bonus_money": 0,
+      "account_money": 0,
+      "can_be_paid_by_account_money": false,
+      "promotions": null
+     },
+     "is_auto_speech_gift": false,
+     "top_rating": null,
+     "subtitle": "",
+     "min_age": 18,
+     "is_adult_content": false,
+     "adult_content_type": "none",
+     "cover_height": 2259,
+     "cover_width": 1500,
+     "foreign_publisher_id": null,
+     "language_code": "ru",
+     "symbols_count": 716650,
+     "expected_symbols_count": null,
+     "podcast_serial_number": null,
+     "last_updated_at": "2026-01-28T13:10:50",
+     "last_released_at": "2024-09-24T11:51:44",
+     "read_percent": 0,
+     "is_finished": false,
+     "is_free": false,
+     "is_promo": false,
+     "is_advertising": false,
+     "advertising_marking": null,
+     "event_data": null,
+     "my_art_status": 0,
+     "is_subscription_art": false,
+     "is_available_with_subscription": true,
+     "is_available_with_litres_subscription": false,
+     "availability_with_partner_subscriptions": [],
+     "art_subscription_status_for_user": "no_subscription",
+     "is_abonement_art": true,
+     "is_available_with_abonement": false,
+     "is_subscription_token_art": true,
+     "is_available_with_subscription_token": false,
+     "can_be_preordered": false,
+     "is_preorder_notified_for_user": false,
+     "is_exclusive_abonement": false,
+     "is_drm": false,
+     "in_gifts": 0,
+     "is_fourth_art_gift": false,
+     "podcast_left_to_buy": null,
+     "availability": 1,
+     "available_from": "2024-09-24T11:38:07",
+     "library_information": null,
+     "persons": [
+      {
+       "id": 33172930,
+       "uuid": "42696816-79c3-11ef-8ce3-0cc47af30fe4",
+       "full_name": "Таш Оу",
+       "full_rodit": "Таша Оу",
+       "url": "/author/tash-ou/",
+       "role": "author"
+      },
+      {
+       "id": 65651,
+       "uuid": "65cf8a70-9e61-102c-b202-edc40df1930e",
+       "full_name": "Александр Сафронов",
+       "full_rodit": "Александра Сафронова",
+       "url": "/author/aleksandr-safronov/",
+       "role": "translator"
+      }
+     ],
+     "is_liked": false,
+     "rating": {
+      "user_rating": null,
+      "rated_1_count": 0,
+      "rated_2_count": 0,
+      "rated_3_count": 1,
+      "rated_4_count": 5,
+      "rated_5_count": 12,
+      "rated_avg": 4.61,
+      "rated_total_count": 18
+     },
+     "linked_arts": [],
+     "series": [],
+     "date_written_at": "2013-01-01",
+     "release_file_id": 110623183,
+     "preview_file_id": null,
+     "labels": {
+      "is_bestseller": false,
+      "is_litres_exclusive": false,
+      "is_new": false,
+      "is_sales_hit": false,
+      "is_audio_series": false
+     },
+     "in_folders": null,
+     "is_archived": false,
+     "interacted_at": null,
+     "read_at": null,
+     "purchased_at": null,
+     "is_hidden": false,
+     "synchronized_arts": [
+      {
+       "id": 71131927
+      }
+     ],
+     "synchronizations": [
+      {
+       "id": 278413,
+       "text_art_id": 71133445,
+       "audio_art_id": 71131927
+      }
+     ],
+     "alternative_version": {
+      "id": 71131927,
+      "link_type": "SYNCED"
+     },
+     "alternative_versions": [
+      {
+       "id": 71131927,
+       "link_type": "SYNCED",
+       "art_type": 1
+      }
+     ],
+     "in_user_cart_status": "not_in_cart",
+     "is_draft_full_free": false,
+     "webtoon_chapters_count": null,
+     "webtoon_last_read_chapter_id": null,
+     "webtoon_last_read_chapter_number": null,
+     "last_read_chapter_id": null,
+     "last_read_chapter_number": null,
+     "current_chapters_count": null
+    }
+   }
+  ],
+  "extra": {
+   "counters": {
+    "all": 1,
+    "text_book": 1,
+    "audiobook": 1,
+    "person": 0,
+    "collection": 0,
+    "series": 0,
+    "genre": 0,
+    "tag": 0,
+    "podcast_episode": 0,
+    "podcast": 0,
+    "publisher": 0,
+    "books_filtered_by_libraries": 0,
+    "webtoon": 0,
+    "paper_book": 0
+   },
+   "pagination": {
+    "next_offset": null
+   },
+   "applied_correction": null,
+   "ml_response_tag": "ltr_search"
+  },
+  "facets": [
+   {
+    "name": "only_litres_subscription_arts",
+    "type": "switch",
+    "title": "Доступно по подписке",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": null,
+    "help_text": "Книги, которые можно читать без ограничений с активной Литрес: Подпиской"
+   },
+   {
+    "name": "only_abonement_arts",
+    "type": "switch",
+    "title": "Доступно в абонементе",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": null,
+    "help_text": "Книги, которые можно взять по Литрес: Абонементу"
+   },
+   {
+    "name": "art_types",
+    "type": "checkbox",
+    "title": "Формат",
+    "data": [
+     {
+      "value": "text_book",
+      "documents_count": 1,
+      "is_selected": false,
+      "title": "Текст"
+     }
+    ],
+    "subtitle": null,
+    "help_text": null
+   },
+   {
+    "name": "languages",
+    "type": "checkbox_search",
+    "title": "Язык",
+    "data": [
+     {
+      "value": "ru",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": "Русский"
+     }
+    ],
+    "subtitle": null,
+    "help_text": null
+   },
+   {
+    "name": "only_high_rated",
+    "type": "switch",
+    "title": "Высокая оценка",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": "Книги с рейтингом 4 и 5 звёзд",
+    "help_text": null
+   }
+  ],
+  "fast_facets": [],
+  "ab_tests_expose": []
+ }
+}

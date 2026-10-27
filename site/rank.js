@@ -2,23 +2,26 @@
 
 export const norm = s => String(s ?? "").toLowerCase().replace(/ё/g, "е").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const noArticle = s => s.replace(/^(the|a|an) /, "");
-// Основное название: до одиночной точки, двоеточия или скобки и без английского артикля в начале.
+// Основное название: до одиночной точки, двоеточия или скобки (и китайских «：（») и без английского артикля в начале.
 // Многоточие — не конец названия: «Зулейха... далёкое всё ближе» не должно стать «Зулейхой».
-const mainTitle = t => noArticle(norm(String(t).split(/(?<!\.)\.(?!\.)|[:(]/)[0]));
-const nameWords = authors => norm(authors.join(" ")).split(" ").filter(w => w.length >= 3);
+export const mainTitle = t => noArticle(norm(String(t).split(/(?<!\.)\.(?!\.)|[:(：（]/)[0]));
+// Китайское имя бывает из двух иероглифов («余华») — его не отбрасываем.
+const HAN = /\p{Script=Han}/u;
+const nameWords = authors => norm(authors.join(" ")).split(" ").filter(w => w.length >= 3 || HAN.test(w));
 
 // Одна книга из разных каталогов: то же основное название и хотя бы одно общее слово в именах авторов —
 // «Юзуки Асако» в LitRes и «Асако Юзуки» в FantLab одна книга. Автора нет у одной из сторон — хватает названия.
-function sameBook(a, b) {
+export function sameBook(a, b) {
   if (mainTitle(a.title) !== mainTitle(b.title)) return false;
   const wa = new Set(nameWords(a.authors)), wb = nameWords(b.authors);
   return !wa.size || !wb.length || wb.some(w => wa.has(w));
 }
 
 // Слово запроса есть в тексте, если какое-то слово текста начинается с его основы (без двух последних букв
-// у слов от пяти букв): «тревожные» найдёт «тревожных», «роулинг» — «роулинга».
+// у слов от пяти букв): «тревожные» найдёт «тревожных», «роулинг» — «роулинга». В китайском пробелов между словами
+// нет — иероглифы ищутся в любом месте: «难明» найдёт «长夜难明».
 const stem = w => w.length >= 5 ? w.slice(0, -2) : w;
-const has = (words, w) => words.some(x => x.startsWith(stem(w)));
+const has = (words, w) => words.some(x => (HAN.test(w) ? x.includes(w) : x.startsWith(stem(w))));
 
 // 100 — название совпало целиком, 91 — совпало до подзаголовка («Магия утра. Как первый час дня» — сама книга,
 // выше серии «Магия утра для предпринимателей»), 90 — начинается с запроса, 85 — запрос — это автор,

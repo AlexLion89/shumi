@@ -1,7 +1,8 @@
 // Каталоги книг: адрес запроса и разбор ответа в общий вид
 //   { src, id, title, authors: [], year, cover, pages, url }
-// Общий для браузера и Worker. FantLab и Open Library браузер спрашивает сам: CORS у них открыт,
-// Cloudflare на пути нет (у Вики с мобильного он почти не отвечает). LitRes без CORS — только через сервер.
+// Общий для браузера и Worker. FantLab, Google и Open Library браузер спрашивает сам: CORS у них открыт,
+// Cloudflare на пути нет (у Вики с мобильного он почти не отвечает). LitRes и Douban без CORS (proxy: true) —
+// через посредника в Yandex Cloud (proxy/index.js), он же отдаёт обложки Douban, которые без своего Referer не грузятся.
 // Настоящие ответы лежат образцами в tests/fixtures: сменит каталог формат — упадёт тест.
 
 // Виды произведений FantLab, которые похожи на «книгу»; рецензии, статьи, микрорассказы и циклы
@@ -23,6 +24,10 @@ const JUNK_EN = /^(summary|workbook|study guide|analysis of|paperback\s*[-–])|
 // Сначала с обложкой: без неё в Open Library обычно дубли изданий и мусор. Порядок внутри групп — как у каталога.
 const coverFirst = items => [...items.filter(b => b.cover), ...items.filter(b => !b.cover)];
 
+// Посредник: функция shumi-proxy в Yandex Cloud (выкладка — tools/proxy-deploy.mjs).
+export const PROXY = "https://functions.yandexcloud.net/d4efieb52ktma35trjc9";
+export const viaProxy = url => `${PROXY}?u=${encodeURIComponent(url)}`;
+
 const yearOf = s => { const m = /^(\d{4})/.exec(String(s ?? "")); return m ? Number(m[1]) : null; };
 const names = s => String(s ?? "").split(/,\s*/).map(x => x.trim()).filter(Boolean);
 
@@ -42,18 +47,49 @@ export const FANTLAB = {
     .sort((a, b) => (a.lang === "русский" ? 0 : 1) - (b.lang === "русский" ? 0 : 1) || (b.year ?? 0) - (a.year ?? 0)),
 };
 
+// Недокументированный API, которым пользуется сам сайт LitRes: книги (text_book) и аудиокниги (audiobook) — один формат.
+const litresUrl = type => q => `https://api.litres.ru/foundation/api/search?q=${encodeURIComponent(q)}&types=${type}&limit=12`;
+const persons = (b, role) => (b.persons ?? []).filter(p => p.role === role).map(p => p.full_name).filter(Boolean);
+const litresParse = (d, extra = () => ({})) => (d?.payload?.data ?? []).map(x => x.instance ?? x).filter(b => b?.id && b.title && !RETELLING.test(b.title)).map(b => ({
+  src: "litres", id: String(b.id), title: b.title,
+  authors: persons(b, "author"),
+  year: yearOf(b.date_written_at),
+  // cover_url — «/pub/c/cover/<id>.jpg», полный размер до полумегабайта; cover_200 — около 20 КБ.
+  cover: b.cover_url ? "https://cdn.litres.ru" + b.cover_url.replace("/pub/c/cover/", "/pub/c/cover_200/") : null,
+  pages: null,
+  url: b.url ? "https://www.litres.ru" + b.url : null,
+  ...extra(b),
+}));
+
+// Аудиокниги LitRes — точная ссылка в карточке книги из «Хочу» и «Читаю»; readers — кто читает.
+export const LITRES_AUDIO = {
+  proxy: true,
+  url: litresUrl("audiobook"),
+  parse: d => litresParse(d, b => ({ readers: persons(b, "reader") })),
+};
+
+// Douban: автор «紫金陈» или «[日] 东野圭吾» — страна в скобках перед именем не нужна; несколько — через « / ».
+const doubanNames = s => String(s ?? "").split(/\s*\/\s*/).map(x => x.replace(/^[\[［(（【][^\]］)）】]{1,4}[\]］)）】]\s*/, "").trim()).filter(Boolean);
+
 export const SOURCES = {
-  // Недокументированный API, которым пользуется сам сайт LitRes; без CORS, поэтому только через Worker.
   litres: {
-    url: q => `https://api.litres.ru/foundation/api/search?q=${encodeURIComponent(q)}&types=text_book&limit=12`,
-    parse: d => (d?.payload?.data ?? []).map(x => x.instance ?? x).filter(b => b?.id && b.title && !RETELLING.test(b.title)).map(b => ({
-      src: "litres", id: String(b.id), title: b.title,
-      authors: (b.persons ?? []).filter(p => p.role === "author").map(p => p.full_name).filter(Boolean),
-      year: yearOf(b.date_written_at),
-      // cover_url — «/pub/c/cover/<id>.jpg», полный размер до полумегабайта; cover_200 — около 20 КБ.
-      cover: b.cover_url ? "https://cdn.litres.ru" + b.cover_url.replace("/pub/c/cover/", "/pub/c/cover_200/") : null,
+    proxy: true,
+    url: litresUrl("text_book"),
+    parse: d => litresParse(d),
+  },
+
+  // Douban — китайские книги с оригинальными обложками. Подсказки поиска сайта: до десятка книг и авторов (type «a»
+  // — страница автора, не книга). Обложка в подсказке мелкая (s) — берём среднюю (m, ~30 КБ), через посредника.
+  douban: {
+    proxy: true,
+    url: q => `https://book.douban.com/j/subject_suggest?q=${encodeURIComponent(q)}`,
+    parse: d => (Array.isArray(d) ? d : []).filter(x => x?.type === "b" && x.id && x.title).map(x => ({
+      src: "douban", id: String(x.id), title: x.title,
+      authors: doubanNames(x.author_name),
+      year: yearOf(x.year),
+      cover: x.pic ? viaProxy(x.pic.replace("/view/subject/s/", "/view/subject/m/")) : null,
       pages: null,
-      url: b.url ? "https://www.litres.ru" + b.url : null,
+      url: x.url || `https://book.douban.com/subject/${x.id}/`,
     })),
   },
 

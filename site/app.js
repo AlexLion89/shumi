@@ -1,14 +1,15 @@
 // Книжная полка Вики: экраны и действия.
 // Данные — sync.js: копия полки на телефоне + файл shelf.json в приватном GitHub-репозитории (github.js).
-// Поиск — FantLab, Google Books и Open Library прямо с телефона (sources.js, rank.js): Cloudflare у Вики с мобильного
-// почти не отвечает (замеры 24.10.2026), поэтому ни поиск, ни данные через него не идут. Ключ Google Books — в
-// config.json приватного shumi-data (ограничен сайтом и Books API), на телефоне — после входа.
+// Поиск — FantLab, Google Books и Open Library прямо с телефона (sources.js, rank.js), LitRes и Douban — через посредника
+// в Yandex Cloud (у них нет CORS): Cloudflare у Вики с мобильного почти не отвечает (замеры 24.10.2026), поэтому ни поиск,
+// ни данные через него не идут. Ключ Google Books — в config.json приватного shumi-data (ограничен сайтом и Books API),
+// на телефоне — после входа.
 import { createFeedback } from "./feedback.js";
 import { AuthError, Conflict, SHARE_REPO, cleanKey, github } from "./github.js";
-import { merge } from "./rank.js";
+import { mainTitle, merge, sameBook } from "./rank.js";
 import { newShareId, newShareKey, seal, shareUrl } from "./seal.js";
 import { SHELVES, findSame, list, newId, readByYear, shareData, stars, thisMonth, toCSV, yearStats } from "./shelf.js";
-import { FANTLAB, SOURCES, fantlabEdition } from "./sources.js";
+import { FANTLAB, LITRES_AUDIO, SOURCES, fantlabEdition, viaProxy } from "./sources.js";
 import { createStore } from "./sync.js";
 
 const params = new URLSearchParams(location.search);
@@ -17,7 +18,8 @@ const GH = params.get("gh") || "https://api.github.com";
 const KEY = "shumi.key";
 if (params.get("gh") && params.get("token")) localStorage.setItem(KEY, params.get("token"));
 
-const SOURCE_NAMES = { fantlab: "FantLab", google: "Google Книги", openlibrary: "Open Library", litres: "LitRes", manual: "добавлена вручную" };
+const SOURCE_NAMES = { fantlab: "FantLab", google: "Google Книги", openlibrary: "Open Library", litres: "LitRes", douban: "Douban",
+  manual: "добавлена вручную" };
 const TO_SHELF = { want: "в «Хочу прочитать»", reading: "в «Читаю»", read: "в «Прочитано»" };
 const MONTHS = "ЯФМАМИИАСОНД";
 
@@ -47,9 +49,12 @@ const nowIso = () => new Date().toISOString();
 
 let store = null, fb = null, ghClient = null, shareClient = null;
 let config = ls.get("shumi.config") ?? {};   // config.json из shumi-data: {googleKey}
-// Каталоги поиска: кириллица — FantLab и Google (русский нон-фикшн есть только там), латиница — ещё и Open Library.
-const catalogs = q => (/[а-яё]/i.test(q) ? ["fantlab", "google"] : ["openlibrary", "google", "fantlab"])
-  .filter(s => s !== "google" || config.googleKey);
+// Каталоги поиска по письменности запроса: иероглифы — Douban (китайские книги с оригинальными обложками) и Google;
+// кириллица — FantLab, LitRes (новинки и всё, чего нет на FantLab, ищет и по части названия с автором) и Google
+// (русский нон-фикшн); латиница — Open Library, Google и FantLab.
+const catalogs = q => (/\p{Script=Han}/u.test(q) ? ["douban", "google"] : /[а-яё]/i.test(q) ? ["fantlab", "litres", "google"]
+  : ["openlibrary", "google", "fantlab"]).filter(s => s !== "google" || config.googleKey);
+const catalogUrl = (src, q) => { const u = SOURCES[src].url(q, config); return SOURCES[src].proxy ? viaProxy(u) : u; };
 
 // ---------- вход
 
@@ -241,7 +246,7 @@ function fetchT(url, ms = 12000, outer) {
 }
 
 // На мобильном важно не гонять лишнее:
-// — кириллица — FantLab и Google Книги (catalogs): Open Library на русские запросы отвечает мусором и медленно (~3 с даже по Wi-Fi);
+// — кириллица — FantLab, LitRes и Google Книги (catalogs): Open Library на русские запросы отвечает мусором и медленно (~3 с даже по Wi-Fi);
 // — допечатала дальше — прежний поиск отменяется, а не тянет ответы, которые уже не нужны;
 // — тот же запрос в течение 10 минут — из памяти.
 const searchCache = new Map();
@@ -269,7 +274,7 @@ async function search(raw) {
   draw();
   await Promise.all(order.map(async src => {
     try {
-      const r = await fetchT(SOURCES[src].url(key, config), 12000, abort.signal);
+      const r = await fetchT(catalogUrl(src, key), 12000, abort.signal);
       if (!r.ok) throw new Error(String(r.status));
       got[src] = SOURCES[src].parse(await r.json()).slice(0, 15);
       state[src] = { cls: "ok", text: String(got[src].length) };
@@ -709,7 +714,7 @@ function openCoverPicker(id) {
     }
     const q = `${String(b0.title).split(/[.:(]/)[0]} ${surname(b0)}`.trim();
     for (const s of catalogs(q)) {
-      jobs.push(fetchT(SOURCES[s].url(q.toLowerCase(), config)).then(r => (r.ok ? r.json() : null))
+      jobs.push(fetchT(catalogUrl(s, q.toLowerCase())).then(r => (r.ok ? r.json() : null))
         .then(d => addCands(merge({ [s]: SOURCES[s].parse(d) }, [s], q).filter(x => x.cover && x.base > 0).slice(0, 12).map(x => x.cover))).catch(() => {}));
     }
     await Promise.all(jobs);
@@ -753,6 +758,7 @@ function openBook(id) {
         el("div", { class: "field" }, el("label", {}, "Оценка"), starPicker(b.rating, rating => put({ rating }))),
         el("div", { class: "field" }, el("label", {}, "Когда прочитала"), readsEditor(b.reads ?? [], reads => put({ reads }))),
       ] : null,
+      b.shelf !== "read" ? el("div", { class: "field" }, el("label", {}, "Аудиокнига"), audioRow(b)) : null,
       el("div", { class: "field" }, el("label", { for: "pages-in" }, "Страниц"),
         el("input", { id: "pages-in", class: "pages-in", type: "number", inputmode: "numeric", min: 1, max: 20000, placeholder: "не знаем", value: b.pages > 0 ? b.pages : null,
           onchange: e => { const n = Math.round(Number(e.target.value)); put({ pages: n > 0 ? n : null }); } })),
@@ -760,6 +766,48 @@ function openBook(id) {
         el("button", { class: "link danger", type: "button", onclick: () => remove(id) }, "Убрать с полки"),
         el("button", { class: "pill main", type: "button", onclick: closeSheet }, "Готово")));
   }, () => JSON.stringify(store.view().books[id] ?? null));
+}
+
+// Аудиокнига для «Хочу» и «Читаю»: точная ссылка на LitRes (поиск аудиокниг через посредника, та же книга — по названию
+// и автору; автор у книги латиницей, а у LitRes по-русски — хватает названия) и поиск в Яндекс Книгах — API у них нет.
+// Ответ LitRes помнится на телефоне неделю, «нет» тоже, — в полку не пишется: это не её данные и не повод для коммита.
+const AUDIO_KEY = "shumi.audio", AUDIO_TTL = 7 * 86400000;
+const audioCache = ls.get(AUDIO_KEY) ?? {};
+const audioId = b => mainTitle(b.title) + "|" + surname(b).toLowerCase();
+const audioPending = new Map();   // шторка перерисовалась, пока LitRes отвечал, — второй запрос не нужен
+const audioKnown = b => { const hit = audioCache[audioId(b)]; return hit && Date.now() - hit.at < AUDIO_TTL ? hit : null; };
+function litresAudio(b) {
+  const id = audioId(b);
+  if (!audioPending.has(id)) audioPending.set(id, findAudio(b).finally(() => audioPending.delete(id)));
+  return audioPending.get(id);
+}
+async function findAudio(b) {
+  const title = String(b.title).split(/[.:(]/)[0].trim(), latin = b.authors?.length && !/[а-яё]/i.test(b.authors.join(""));
+  let found = null;
+  for (const q of [...new Set([`${title} ${surname(b)}`.trim(), title])]) {
+    const r = await fetchT(viaProxy(LITRES_AUDIO.url(q.toLowerCase())));
+    if (!r.ok) throw new Error(String(r.status));
+    const items = LITRES_AUDIO.parse(await r.json());
+    const m = items.find(x => sameBook(x, b)) ?? (latin ? items.find(x => mainTitle(x.title) === mainTitle(b.title)) : null);
+    if (m) { found = { url: m.url, readers: m.readers.slice(0, 2) }; break; }
+  }
+  for (const [k, v] of Object.entries(audioCache)) if (Date.now() - v.at > AUDIO_TTL) delete audioCache[k];
+  audioCache[audioId(b)] = { at: Date.now(), found };
+  ls.set(AUDIO_KEY, audioCache);
+  return found;
+}
+function audioRow(b) {
+  const yandex = el("a", { class: "ext", target: "_blank", rel: "noopener",
+    href: "https://books.yandex.ru/search?text=" + encodeURIComponent(`${b.title} ${b.authors?.[0] ?? ""}`.trim()) }, "Поискать в Яндекс Книгах");
+  const shown = f => (f
+    ? el("a", { class: "ext main", href: f.url, target: "_blank", rel: "noopener" }, "🎧 Аудиокнига на LitRes",
+      f.readers.length ? el("small", {}, " · читает " + f.readers.join(", ")) : null)
+    : el("span", { class: "sub-inline" }, "На LitRes аудиокниги нет"));
+  const known = audioKnown(b);
+  if (known) return el("div", { class: "audio" }, shown(known.found), yandex);
+  const litres = el("span", { class: "sub-inline" }, "Ищу на LitRes…");
+  litresAudio(b).then(f => litres.replaceWith(shown(f)), () => litres.replaceWith(el("span", { class: "sub-inline" }, "LitRes не ответил")));
+  return el("div", { class: "audio" }, litres, yandex);
 }
 
 // «Прочитала» из поиска (meta — книга каталога) или «Дочитала» из «Читаю» (id — книга с полки).

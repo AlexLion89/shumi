@@ -1,0 +1,268 @@
+{
+ "status": 200,
+ "error": null,
+ "payload": {
+  "data": [
+   {
+    "type": "audiobook",
+    "instance": {
+     "id": 69333925,
+     "uuid": "6fa90d41-09fa-11ee-8496-0cc47af30fe4",
+     "cover_url": "/pub/c/cover/69333925.jpg",
+     "url": "/audiobook/keyt-kuinn/kod-rozy-69333925/",
+     "title": "Код Розы",
+     "cover_ratio": 1,
+     "is_draft": false,
+     "art_type": 1,
+     "prices": {
+      "final_price": 389,
+      "inapp_price": null,
+      "inapp_base_price": null,
+      "full_price": 389,
+      "discount_price": null,
+      "litcoin_count": 0,
+      "inapp_name": null,
+      "inapp_base_name": null,
+      "currency": "RUB",
+      "discount_percent": null,
+      "cost_with_bonus": 389,
+      "bonus_money": 0,
+      "account_money": 0,
+      "can_be_paid_by_account_money": false,
+      "promotions": null
+     },
+     "is_auto_speech_gift": false,
+     "top_rating": null,
+     "subtitle": "",
+     "min_age": 18,
+     "is_adult_content": false,
+     "adult_content_type": "none",
+     "cover_height": 824,
+     "cover_width": 824,
+     "foreign_publisher_id": null,
+     "language_code": "ru",
+     "symbols_count": 81546,
+     "expected_symbols_count": null,
+     "podcast_serial_number": null,
+     "last_updated_at": "2026-01-23T16:41:20",
+     "last_released_at": "2023-06-14T10:49:20",
+     "read_percent": 0,
+     "is_finished": false,
+     "is_free": false,
+     "is_promo": false,
+     "is_advertising": false,
+     "advertising_marking": null,
+     "event_data": null,
+     "my_art_status": 0,
+     "is_subscription_art": false,
+     "is_available_with_subscription": true,
+     "is_available_with_litres_subscription": false,
+     "availability_with_partner_subscriptions": [],
+     "art_subscription_status_for_user": "no_subscription",
+     "is_abonement_art": true,
+     "is_available_with_abonement": false,
+     "is_subscription_token_art": true,
+     "is_available_with_subscription_token": false,
+     "can_be_preordered": false,
+     "is_preorder_notified_for_user": false,
+     "is_exclusive_abonement": false,
+     "is_drm": false,
+     "in_gifts": 0,
+     "is_fourth_art_gift": false,
+     "podcast_left_to_buy": null,
+     "availability": 1,
+     "available_from": "2023-06-14T10:47:59",
+     "library_information": null,
+     "persons": [
+      {
+       "id": 3107580,
+       "uuid": "c65837a1-4d2a-11e2-9112-002590591ea6",
+       "full_name": "Кейт Куинн",
+       "full_rodit": "Кейт Куинн",
+       "url": "/author/keyt-kuinn/",
+       "role": "author"
+      },
+      {
+       "id": 22461262,
+       "uuid": "62535d4d-7be6-11ea-9c06-0cc47a5f137d",
+       "full_name": "Елена Сафф",
+       "full_rodit": "Елены Сафф",
+       "url": "/author/elena-saff/",
+       "role": "translator"
+      },
+      {
+       "id": 31948152,
+       "uuid": "7f5c2c7e-9676-11ec-a192-0cc47af30dde",
+       "full_name": "Мария Орлова",
+       "full_rodit": "Марии Орловой",
+       "url": "/author/mariya-orlova-31948152/",
+       "role": "reader"
+      }
+     ],
+     "is_liked": false,
+     "rating": {
+      "user_rating": null,
+      "rated_1_count": 5,
+      "rated_2_count": 9,
+      "rated_3_count": 11,
+      "rated_4_count": 45,
+      "rated_5_count": 592,
+      "rated_avg": 4.83,
+      "rated_total_count": 662
+     },
+     "linked_arts": [],
+     "series": [],
+     "date_written_at": "2021-01-01",
+     "release_file_id": 99526828,
+     "preview_file_id": 99526588,
+     "labels": {
+      "is_bestseller": false,
+      "is_litres_exclusive": false,
+      "is_new": false,
+      "is_sales_hit": false,
+      "is_audio_series": false
+     },
+     "in_folders": null,
+     "is_archived": false,
+     "interacted_at": null,
+     "read_at": null,
+     "purchased_at": null,
+     "is_hidden": false,
+     "synchronized_arts": [
+      {
+       "id": 68925921
+      }
+     ],
+     "synchronizations": [
+      {
+       "id": 248253,
+       "text_art_id": 68925921,
+       "audio_art_id": 69333925
+      }
+     ],
+     "alternative_version": {
+      "id": 68925921,
+      "link_type": "SYNCED"
+     },
+     "alternative_versions": [
+      {
+       "id": 68925921,
+       "link_type": "SYNCED",
+       "art_type": 0
+      }
+     ],
+     "in_user_cart_status": "not_in_cart",
+     "is_draft_full_free": false,
+     "webtoon_chapters_count": null,
+     "webtoon_last_read_chapter_id": null,
+     "webtoon_last_read_chapter_number": null,
+     "last_read_chapter_id": null,
+     "last_read_chapter_number": null,
+     "current_chapters_count": null
+    }
+   }
+  ],
+  "extra": {
+   "counters": {
+    "all": 1,
+    "text_book": 1,
+    "audiobook": 1,
+    "person": 0,
+    "collection": 1,
+    "series": 0,
+    "genre": 0,
+    "tag": 0,
+    "podcast_episode": 0,
+    "podcast": 0,
+    "publisher": 0,
+    "books_filtered_by_libraries": 0,
+    "webtoon": 0,
+    "paper_book": 0
+   },
+   "pagination": {
+    "next_offset": null
+   },
+   "applied_correction": null,
+   "ml_response_tag": "ltr_search"
+  },
+  "facets": [
+   {
+    "name": "only_litres_subscription_arts",
+    "type": "switch",
+    "title": "Доступно по подписке",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": null,
+    "help_text": "Книги, которые можно читать без ограничений с активной Литрес: Подпиской"
+   },
+   {
+    "name": "only_abonement_arts",
+    "type": "switch",
+    "title": "Доступно в абонементе",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": null,
+    "help_text": "Книги, которые можно взять по Литрес: Абонементу"
+   },
+   {
+    "name": "art_types",
+    "type": "checkbox",
+    "title": "Формат",
+    "data": [
+     {
+      "value": "audiobook",
+      "documents_count": 1,
+      "is_selected": false,
+      "title": "Аудио"
+     }
+    ],
+    "subtitle": null,
+    "help_text": null
+   },
+   {
+    "name": "languages",
+    "type": "checkbox_search",
+    "title": "Язык",
+    "data": [
+     {
+      "value": "ru",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": "Русский"
+     }
+    ],
+    "subtitle": null,
+    "help_text": null
+   },
+   {
+    "name": "only_high_rated",
+    "type": "switch",
+    "title": "Высокая оценка",
+    "data": [
+     {
+      "value": "true",
+      "documents_count": 2,
+      "is_selected": false,
+      "title": null
+     }
+    ],
+    "subtitle": "Книги с рейтингом 4 и 5 звёзд",
+    "help_text": null
+   }
+  ],
+  "fast_facets": [],
+  "ab_tests_expose": []
+ }
+}

@@ -12,8 +12,14 @@
   резервная копия. Копия полки и очередь неотправленных правок лежат на телефоне (`site/sync.js`), поэтому
   приложение открывается и работает без сети; правки с двух устройств не затирают друг друга.
 - **Вход** — токен GitHub с доступом только к `shumi-data` (Contents: чтение и запись), вводится один раз.
-- **Поиск** — FantLab, Google Книги и Open Library прямо с телефона (`site/sources.js`, порядок выдачи — `site/rank.js`).
-  Ключ Google Books — в `config.json` shumi-data (ограничен сайтом и Books API), телефон читает его после входа.
+- **Поиск** — FantLab, Google Книги и Open Library прямо с телефона (`site/sources.js`, порядок выдачи — `site/rank.js`);
+  LitRes (русские книги и аудиокниги) и Douban (китайские книги с оригинальными обложками) — через посредника.
+  Каталоги выбираются по письменности запроса: кириллица, латиница, иероглифы. Ключ Google Books — в `config.json`
+  shumi-data (ограничен сайтом и Books API), телефон читает его после входа.
+- **Посредник** — функция `shumi-proxy` в Yandex Cloud (`proxy/`, каталог `shumi` облака владельца): у LitRes и Douban
+  нет CORS, обложки Douban грузятся только со своим Referer. Пересылает лишь адреса из короткого списка, ничего не
+  хранит; не больше двух экземпляров одновременно. Выкладка — `node tools/proxy-deploy.mjs` (yc, профиль `shumi`).
+- **Аудиокнига** — в карточке книги из «Хочу» и «Читаю»: точная ссылка на LitRes с чтецом и поиск в Яндекс Книгах.
 - **Замечания** — `feedback/<id>.json` в shumi-data (`site/feedback.js`); ответ — `node tools/feedback.mjs`.
   Новое замечание заводит issue в shumi-data (задание `feedback.yml` там) — GitHub присылает уведомление.
 - **Копии обложек и таблица** — задание `backup.yml` в shumi-data (скрипт `tools/backup.mjs`): `covers/<id>.jpg`,
@@ -42,4 +48,4 @@ SHUMI_TOKEN_FILE=~/.shumi-dev-token node tools/live-check.mjs    # живой с
 ```
 
 Выкладка — пуш в `main`: GitHub Actions гоняет тесты, выкладывает сайт на Pages (подставляет версию в `sw.js`)
-и Worker. Иконки — из `art/raccoon.png`: `python tools/icons.py`.
+и Worker. Посредник выкладывается отдельно, с машины владельца: `node tools/proxy-deploy.mjs`. Иконки — из `art/raccoon.png`: `python tools/icons.py`.
